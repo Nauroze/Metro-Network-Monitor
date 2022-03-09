@@ -14,3 +14,7 @@ add_executable(network-monitor ${SOURCES})
 target_compile_features(network-monitor PRIVATE cxx_std_17)
 
 target_link_libraries(network-monitor PRIVATE Boost::Boost)
+
+if(MINGW)
+  target_link_libraries(network-monitor PRIVATE ws2_32)
+endif()
