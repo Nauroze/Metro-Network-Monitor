@@ -6,12 +6,6 @@
 
 using tcp = boost::asio::ip::tcp;
 using namespace boost::beast;
-void OnConnect(boost::system::error_code ec)
-{
-    std::cerr << (ec ? "Error: " : "OK")
-            << (ec ? ec.message() : "")
-            << std::endl;
-}
 
 int main()
 {
@@ -38,26 +32,28 @@ int main()
     // connect to resolved endpoint
     socket.connect(*resolverIt, ec);
     
-    // create websocket and perform handshake
-    websocket::stream<tcp_stream> ws(std::move(socket));
-    ws.handshake("ltnm.learncppthroughprojects.com", "/echo", ec);
-
-    if (ec) {
-        std::cerr << "Error: " << ec.message() << std::endl;
-        return -1;
-    } else {
-        std::cout << "OK" << std::endl;
-    }
-
-    // Success handshake, send message
+    // message
     const char* msg = "Hello You";
-    boost::asio::const_buffer writemessage(msg, strlen(msg));
-    ws.write(writemessage, ec);
+    
+    // create websocket
+    websocket::stream<tcp_stream> ws(std::move(socket));
 
-    // Wait for reply
-    boost::beast::flat_buffer readmessage;
-    ws.read(readmessage);
-    std::cout << "Message echoed is: " << boost::beast::make_printable(readmessage.data());
+    // async handshake and lambda callback
+    ws.async_handshake("ltnm.learncppthroughprojects.com", "/echo", 
+        [&msg,&ws](boost::system::error_code ec)
+        {
+            std::cerr << (ec ? "OnHandShake Error: " : "OnHandShake OK")
+            << (ec ? ec.message() : "")
+            << std::endl;
+
+            boost::asio::const_buffer writemessage(msg, strlen(msg));
+            ws.write(writemessage, ec);
+
+            boost::beast::flat_buffer readmessage;
+            ws.read(readmessage);
+            std::cout << "Message echoed is: " << boost::beast::make_printable(readmessage.data());
+        }
+    );
     
     // Run all context work and close
     ioc.run();
