@@ -18,8 +18,7 @@ WebSocketClient::WebSocketClient(
         m_ioc(&ioc),
         m_resolver(boost::asio::make_strand(ioc)),
         m_ws(boost::asio::make_strand(ioc))
-{
-    
+{ 
 }
 
 WebSocketClient::~WebSocketClient() = default;
@@ -33,19 +32,22 @@ void WebSocketClient::Connect(
     m_onConnect = onConnect;
     m_onMessage = onMessage;
     m_onDisconnect = onDisconnect;
-
     m_closed = false;
+
     auto resolverIt = m_resolver.resolve(m_url, m_port, m_ec);
-    if (m_ec) {
+
+    if (m_ec) 
+    {
         std::cerr << "Error: " << m_ec.message() << "\n";
         return;
     } 
+
     m_ws.next_layer().async_connect(*resolverIt, 
                                     [this](auto ec)
                                     {
                                         OnConnect(ec);
                                     }
-                                    );
+    );
 }
 
 void WebSocketClient::Send(
@@ -176,6 +178,4 @@ void WebSocketClient::ReadMessage(
         }
     );
 }
-
-
 } // namespace NetworkMonitor
