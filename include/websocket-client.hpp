@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/beast.hpp>
+#include <boost/beast/ssl/ssl_stream.hpp>
 
 namespace NetworkMonitor {
 
@@ -25,7 +26,8 @@ public:
         const std::string& url,
         const std::string& endpoint,
         const std::string& port,
-        boost::asio::io_context& ioc
+        boost::asio::io_context& ioc,
+        boost::asio::ssl::context& ctx
     );
 
     /*! \brief Destructor.
@@ -75,8 +77,9 @@ public:
     std::string m_port;
     bool m_closed;
     boost::asio::io_context* m_ioc;
+    boost::asio::ssl::context* m_ctx;
     boost::system::error_code m_ec;
-    boost::beast::websocket::stream<boost::beast::tcp_stream> m_ws;
+    boost::beast::websocket::stream<boost::beast::ssl_stream<boost::beast::tcp_stream>> m_ws;
     boost::asio::ip::tcp::resolver m_resolver;
     boost::beast::flat_buffer m_readBuffer;
 
@@ -87,6 +90,10 @@ public:
     std::function<void (boost::system::error_code)> m_onDisconnect {nullptr};
 
     void OnConnect(
+        const boost::system::error_code& ec
+    );
+    
+    void OnTLSHandshake(
         const boost::system::error_code& ec
     );
     

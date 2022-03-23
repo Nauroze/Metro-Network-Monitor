@@ -40,6 +40,9 @@ add_executable(network-monitor-test ${TEST_SOURCES})
 
 target_compile_features(network-monitor-test PRIVATE cxx_std_17)
 
+target_compile_definitions(network-monitor-test PRIVATE 
+                          TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem")
+                          
 target_include_directories(network-monitor-test PRIVATE include/)
 
 target_link_libraries(network-monitor-test PRIVATE
@@ -50,7 +53,7 @@ if(MINGW)
   target_link_libraries(network-monitor-test PRIVATE ws2_32)
 endif()
 
-# Enable Testing
+# ENABLE CMAKE TESTS
 enable_testing()
 
 add_test(

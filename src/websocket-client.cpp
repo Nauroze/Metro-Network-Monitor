@@ -10,14 +10,15 @@ WebSocketClient::WebSocketClient(
         const std::string& url,
         const std::string& endpoint,
         const std::string& port,
-        boost::asio::io_context& ioc) 
+        boost::asio::io_context& ioc,
+        boost::asio::ssl::context& ctx) 
         : m_url(url),
         m_endpoint(endpoint),
         m_port(port),
         m_closed(true),
         m_ioc(&ioc),
         m_resolver(boost::asio::make_strand(ioc)),
-        m_ws(boost::asio::make_strand(ioc))
+        m_ws(boost::asio::make_strand(ioc), ctx)
 { 
 }
 
@@ -42,7 +43,7 @@ void WebSocketClient::Connect(
         return;
     } 
 
-    m_ws.next_layer().async_connect(*resolverIt, 
+    m_ws.next_layer().next_layer().async_connect(*resolverIt, 
                                     [this](auto ec)
                                     {
                                         OnConnect(ec);
@@ -83,7 +84,6 @@ void WebSocketClient::OnConnect(
     const boost::system::error_code& ec
 )
 {
-    
     std::cerr << (ec ? "OnConnect Error: " : "OnConnect OK")
     << (ec ? ec.message() : "")
     << "\n";
@@ -96,13 +96,37 @@ void WebSocketClient::OnConnect(
         }
     }
 
+    m_ws.next_layer().async_handshake(boost::asio::ssl::stream_base::client,
+                                      [this](auto ec)
+                                      {
+                                          OnTLSHandshake(ec);
+                                      }
+                                    ); 
+}
+
+void WebSocketClient::OnTLSHandshake(
+    const boost::system::error_code& ec
+)
+{
+    std::cerr << (ec ? "OnTLSHandshake Error: " : "OnTLSHandshake OK")
+    << (ec ? ec.message() : "")
+    << "\n";
+    
+    if (ec)
+    {
+        if (m_onConnect)
+        {
+            m_onConnect(ec);
+        }
+    }
+    
     m_ws.async_handshake(m_url, m_endpoint,
                         [this](auto ec)
                         {
                             OnHandshake(ec);
                         }
     );
-}
+}     
 
 void WebSocketClient::OnHandshake(
     const boost::system::error_code& ec
