@@ -17,6 +17,79 @@ BOOST_AUTO_TEST_CASE(cacert_pem)
     BOOST_CHECK(file_exists);
 }
 
+bool CheckResponse(const std::string& response)
+{
+    // We do not parse the whole message. We only check that it contains some
+    // expected items.
+    bool ok {true};
+    ok &= response.find("ERROR") != std::string::npos;
+    ok &= response.find("ValidationInvalidAuth") != std::string::npos;
+    return ok;
+}
+
+// Test: Check if cacert.pem file exists
+BOOST_AUTO_TEST_CASE(STOMP_network_events)
+{
+    // Server information and message
+    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string endpoint {"/network-events"};
+    const std::string port {"443"};
+    const std::string message {"STOMP\ncontent-length:14\naccept-version:1.2\n\nOptional body"};
+    
+    // I/O context object.
+    boost::asio::io_context ioc {};
+
+    // ssl context
+    boost::asio::ssl::context ctx{boost::asio::ssl::context::tlsv12_client};
+
+    // certificate check
+    ctx.load_verify_file(TESTS_CACERT_PEM);
+
+    // The class under test
+    WebSocketClient client {url, endpoint, port, ioc, ctx};
+
+    // We use these flags to check that the connection, send, receive functions
+    // work as expected.
+    bool connected {false};
+    bool messageSent {false};
+    bool messageReceived {false};
+    bool disconnected {false};
+    std::string echo;
+
+    // Our own callbacks
+    auto onSend {[&messageSent](auto ec) {
+        messageSent = !ec;
+    }};
+    auto onConnect {[&client, &connected, &onSend, &message](auto ec) {
+        connected = !ec;
+        if (!ec) {
+            client.Send(message, onSend);
+        }
+    }};
+    auto onClose {[&disconnected](auto ec) {
+        disconnected = !ec;
+    }};
+    auto onReceive {[&client,
+                      &onClose,
+                      &messageReceived,
+                      &echo](auto ec, auto received) {
+        messageReceived = !ec;
+        echo = received;
+        client.Close(onClose);
+    }};
+
+    // We must call io_context::run for asynchronous callbacks to run.
+    client.Connect(onConnect, onReceive);
+    ioc.run();
+
+    // Use Boost Unit Tests to check
+    BOOST_CHECK(connected);
+    BOOST_CHECK(messageSent);
+    BOOST_CHECK(messageReceived);
+    BOOST_CHECK(disconnected);
+    BOOST_CHECK(CheckResponse(echo));
+}
+
 // Test: Check if WebSocketClient can connect to an echo server and return a sent message.
 BOOST_AUTO_TEST_CASE(class_WebSocketClient)
 {
