@@ -13,18 +13,28 @@ find_package(Boost 1.78 REQUIRED COMPONENTS system)
 
 find_package(OpenSSL REQUIRED)
 
+find_package(CURL REQUIRED)
+
+find_package(nlohmann_json REQUIRED)
+
 set(SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/src/websocket-client.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/src/file-downloader.cpp"
    )
+
 add_library(network-monitor STATIC ${SOURCES})
 
 target_compile_features(network-monitor PUBLIC cxx_std_17)
 
 target_include_directories(network-monitor PUBLIC include/)
 
-target_link_libraries(network-monitor PUBLIC 
+target_link_libraries(network-monitor 
+                    PUBLIC 
                       OpenSSL::OpenSSL
-                      Boost::Boost)
+                      Boost::Boost
+                      nlohmann_json::nlohmann_json
+                    PRIVATE
+                      CURL::CURL)
 
 if(MINGW)
   target_link_libraries(network-monitor PUBLIC ws2_32)
@@ -36,6 +46,7 @@ project(network-monitor-test)
 set(TEST_SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/websocket-client.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/tests/file-downloader.cpp"
    )
 
 add_executable(network-monitor-test ${TEST_SOURCES})
@@ -43,7 +54,8 @@ add_executable(network-monitor-test ${TEST_SOURCES})
 target_compile_features(network-monitor-test PRIVATE cxx_std_17)
 
 target_compile_definitions(network-monitor-test PRIVATE 
-                          TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem")
+                          TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
+                          TESTS_NETWORK_LAYOUT_JSON="${CMAKE_CURRENT_SOURCE_DIR}/tests/network-layout.json")
                           
 target_include_directories(network-monitor-test PRIVATE include/)
 
