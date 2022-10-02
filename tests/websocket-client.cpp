@@ -34,7 +34,19 @@ BOOST_AUTO_TEST_CASE(STOMP_network_events)
     const std::string url {"ltnm.learncppthroughprojects.com"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
-    const std::string message {"STOMP\ncontent-length:14\naccept-version:1.2\n\nOptional body"};
+    
+    // STOMP frame
+    const std::string username {"fake_username"};
+    const std::string password {"fake_password"};
+    std::stringstream ss {};
+    ss << "STOMP" << std::endl
+       << "accept-version:1.2" << std::endl
+       << "host:transportforlondon.com" << std::endl
+       << "login:" << username << std::endl
+       << "passcode:" << password << std::endl
+       << std::endl // Headers need to be followed by a blank line.
+       << '\0'; // The body (even if absent) must be followed by a NULL octet.
+    const std::string message {ss.str()};
     
     // I/O context object.
     boost::asio::io_context ioc {};
@@ -74,7 +86,7 @@ BOOST_AUTO_TEST_CASE(STOMP_network_events)
                       &messageReceived,
                       &echo](auto ec, auto received) {
         messageReceived = !ec;
-        echo = received;
+        echo = std::move(received);
         client.Close(onClose);
     }};
 

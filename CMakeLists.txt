@@ -7,6 +7,8 @@ endif()
 # NETWORK-MONITOR STATIC LIBRARY
 project(network-monitor)
 
+set (CMAKE_CXX_FLAGS "-D_GLIBCXX_USE_CXX11_ABI=0")
+
 find_package(Boost 1.78 REQUIRED COMPONENTS system)
 
 find_package(OpenSSL REQUIRED)
