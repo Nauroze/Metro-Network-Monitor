@@ -18,8 +18,9 @@ find_package(CURL REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
 set(SOURCES 
-   "${CMAKE_CURRENT_SOURCE_DIR}/src/websocket-client.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/src/transport-network.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/src/websocket-client.cpp"
    )
 
 add_library(network-monitor STATIC ${SOURCES})
@@ -44,9 +45,10 @@ endif()
 project(network-monitor-test)
 
 set(TEST_SOURCES 
-   "${CMAKE_CURRENT_SOURCE_DIR}/tests/websocket-client.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/tests/transport-network.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/tests/websocket-client.cpp"
    )
 
 add_executable(network-monitor-test ${TEST_SOURCES})
