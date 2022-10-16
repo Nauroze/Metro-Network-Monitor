@@ -84,9 +84,8 @@ void WebSocketClient::OnConnect(
     const boost::system::error_code& ec
 )
 {
-    std::cerr << (ec ? "OnConnect Error: " : "OnConnect OK")
-    << (ec ? ec.message() : "")
-    << "\n";
+    if (ec)
+        std::cerr << "OnConnect Error: " << ec.message() << "\n";
 
     if (ec)
     {
@@ -108,9 +107,8 @@ void WebSocketClient::OnTLSHandshake(
     const boost::system::error_code& ec
 )
 {
-    std::cerr << (ec ? "OnTLSHandshake Error: " : "OnTLSHandshake OK")
-    << (ec ? ec.message() : "")
-    << "\n";
+    if (ec)
+        std::cerr << "OnTLSHandshake Error: " << ec.message() << "\n";
     
     if (ec)
     {
@@ -132,9 +130,8 @@ void WebSocketClient::OnHandshake(
     const boost::system::error_code& ec
 )
 {
-    std::cerr << (ec ? "OnHandshake Error: " : "OnHandshake OK")
-    << (ec ? ec.message() : "")
-    << "\n";
+    if (ec)
+        std::cerr << "OnHandshake Error: " << ec.message() << "\n";
 
     if (ec)
     {
@@ -160,9 +157,8 @@ void WebSocketClient::OnRead(
     size_t size
 )
 {
-    std::cerr << (ec ? "OnRead Error: " : "OnRead OK")
-    << (ec ? ec.message() : "")
-    << "\n";
+    if (ec)
+        std::cerr << "OnRead Error: " << ec.message() << "\n";
 
     if(ec)
     {
@@ -181,9 +177,8 @@ void WebSocketClient::ReadMessage(
     const boost::system::error_code& ec
 )
 {
-    std::cerr << (ec ? "ReadMessage Error: " : "ReadMessage OK")
-    << (ec ? ec.message() : "")
-    << "\n";
+    if (ec)
+        std::cerr << "ReadMessage Error: " << ec.message() << "\n";
 
     if (ec == boost::asio::error::operation_aborted)
     {
