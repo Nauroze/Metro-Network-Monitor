@@ -292,6 +292,17 @@ public:
     
     std::unordered_map<Id, std::shared_ptr<GraphNode>> stations_ {};
     std::unordered_map<Id, std::shared_ptr<LineInternal>> lines_ {};
+
+    // Private methods
+    private:
+    std::shared_ptr<TransportNetwork::GraphNode> GetStation(
+        const Id& stationId
+    ) const;
+
+    bool AddRouteToLine(
+        const Route& route,
+        const std::shared_ptr<LineInternal>& lineInternal
+    );
 };
 
 } // namespace NetworkMonitor
