@@ -286,70 +286,70 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_SUITE_END(); // PassengerEvents
 
-// BOOST_AUTO_TEST_SUITE(GetRoutesServingStation);
+BOOST_AUTO_TEST_SUITE(GetRoutesServingStation);
 
-// BOOST_AUTO_TEST_CASE(basic)
-// {
-//     TransportNetwork nw {};
-//     bool ok {false};
+BOOST_AUTO_TEST_CASE(basic)
+{
+    TransportNetwork nw {};
+    bool ok {false};
 
-//     // Add a line with 1 route.
-//     // route0: 0 ---> 1 ---> 2
-//     // Plus a station served by no routes: 3.
-//     Station station0 {
-//         "station_000",
-//         "Station Name 0",
-//     };
-//     Station station1 {
-//         "station_001",
-//         "Station Name 1",
-//     };
-//     Station station2 {
-//         "station_002",
-//         "Station Name 2",
-//     };
-//     Station station3 {
-//         "station_003",
-//         "Station Name 3",
-//     };
-//     Route route0 {
-//         "route_000",
-//         "inbound",
-//         "line_000",
-//         "station_000",
-//         "station_002",
-//         {"station_000", "station_001", "station_002"},
-//     };
-//     Line line {
-//         "line_000",
-//         "Line Name",
-//         {route0},
-//     };
-//     ok = true;
-//     ok &= nw.AddStation(station0);
-//     ok &= nw.AddStation(station1);
-//     ok &= nw.AddStation(station2);
-//     ok &= nw.AddStation(station3);
-//     BOOST_REQUIRE(ok);
-//     ok = nw.AddLine(line);
-//     BOOST_REQUIRE(ok);
+    // Add a line with 1 route.
+    // route0: 0 ---> 1 ---> 2
+    // Plus a station served by no routes: 3.
+    Station station0 {
+        "station_000",
+        "Station Name 0",
+    };
+    Station station1 {
+        "station_001",
+        "Station Name 1",
+    };
+    Station station2 {
+        "station_002",
+        "Station Name 2",
+    };
+    Station station3 {
+        "station_003",
+        "Station Name 3",
+    };
+    Route route0 {
+        "route_000",
+        "inbound",
+        "line_000",
+        "station_000",
+        "station_002",
+        {"station_000", "station_001", "station_002"},
+    };
+    Line line {
+        "line_000",
+        "Line Name",
+        {route0},
+    };
+    ok = true;
+    ok &= nw.AddStation(station0);
+    ok &= nw.AddStation(station1);
+    ok &= nw.AddStation(station2);
+    ok &= nw.AddStation(station3);
+    BOOST_REQUIRE(ok);
+    ok = nw.AddLine(line);
+    BOOST_REQUIRE(ok);
 
-//     // Check the routes served.
-//     std::vector<Id> routes {};
-//     routes = nw.GetRoutesServingStation(station0.id);
-//     BOOST_REQUIRE_EQUAL(routes.size(), 1);
-//     BOOST_CHECK(routes[0] == route0.id);
-//     routes = nw.GetRoutesServingStation(station1.id);
-//     BOOST_REQUIRE_EQUAL(routes.size(), 1);
-//     BOOST_CHECK(routes[0] == route0.id);
-//     routes = nw.GetRoutesServingStation(station2.id);
-//     BOOST_REQUIRE_EQUAL(routes.size(), 1);
-//     BOOST_CHECK(routes[0] == route0.id);
-//     routes = nw.GetRoutesServingStation(station3.id);
-//     BOOST_CHECK_EQUAL(routes.size(), 0);
-// }
+    // Check the routes served.
+    std::vector<Id> routes {};
+    routes = nw.GetRoutesServingStation(station0.id);
+    BOOST_REQUIRE_EQUAL(routes.size(), 1);
+    BOOST_CHECK(routes[0] == route0.id);
+    routes = nw.GetRoutesServingStation(station1.id);
+    BOOST_REQUIRE_EQUAL(routes.size(), 1);
+    BOOST_CHECK(routes[0] == route0.id);
+    routes = nw.GetRoutesServingStation(station2.id);
+    BOOST_REQUIRE_EQUAL(routes.size(), 1);
+    BOOST_CHECK(routes[0] == route0.id);
+    routes = nw.GetRoutesServingStation(station3.id);
+    BOOST_CHECK_EQUAL(routes.size(), 0);
+}
 
-// BOOST_AUTO_TEST_SUITE_END(); // GetRoutesServingStation
+BOOST_AUTO_TEST_SUITE_END(); // GetRoutesServingStation
 
 // BOOST_AUTO_TEST_SUITE(TravelTime);
 

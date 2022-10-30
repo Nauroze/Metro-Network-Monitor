@@ -126,6 +126,49 @@ namespace NetworkMonitor {
         return stationNode->passengerCount;
     }
 
+    /*! \brief Get list of routes serving a given station.
+     *
+     *  \returns An empty vector if there was an error getting the list of
+     *           routes serving the station, or if the station has legitimately
+     *           no routes serving it.
+     *
+     *  The station must already be in the network.
+     */
+    std::vector<Id> TransportNetwork::GetRoutesServingStation(
+        const Id& station
+    ) const
+    {
+        const auto stationNode { GetStation(station) };
+        if(stationNode == nullptr)
+            return {};
+
+        std::vector<Id> routes {};
+
+        const auto& edges {stationNode->edges};
+        for (const auto& edge : edges)
+        {
+            routes.push_back(edge->route->id);
+        }
+
+        // This is bad. The previous loop misses a corner case: The end station of a route does
+        // not have any edge containing that route, because we only track the routes
+        // that *leave from*, not *arrive to* a certain station.
+        // We need to loop over all line routes to check if our station is the end
+        // stop of any route.
+        // FIXME: In the worst case, we are iterating over all routes for all
+        //        lines in the network. We may want to optimize this.
+        for (const auto& [_, line]: lines_) {
+            for (const auto& [_, route]: line->routes) {
+                const auto& endStop {route->stops[route->stops.size() - 1]};
+                if (stationNode == endStop) {
+                    routes.push_back(route->id);
+                }
+            }
+        }
+
+        return routes;
+    }
+
     /*! \brief Add a route to lineInternal
      *
      *  \returns false if there was an error while adding the route to the
