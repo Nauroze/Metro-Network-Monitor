@@ -19,6 +19,76 @@ namespace NetworkMonitor {
     {
         
     }
+    
+    /*! \brief Populate the network from a JSON object.
+     *
+     *  \param src Ownership of the source JSON object is moved to this method.
+     *
+     *  \returns false if stations and lines where parsed successfully, but not
+     *           the travel times.
+     *
+     *  \throws std::runtime_error This method throws if the JSON items were
+     *                             parsed correctly but there was an issue
+     *                             adding new stations or lines to the network.
+     *  \throws nlohmann::json::exception If there was a problem parsing the
+     *                                    JSON object.
+     */
+    bool TransportNetwork::FromJson(
+        nlohmann::json&& src
+    )
+    {
+        bool ok{true};
+
+        // Add Stations
+        for(auto&& stationJson : src.at("stations")) {
+            Station station {
+                std::move(stationJson.at("station_id").get<std::string>()),
+                std::move(stationJson.at("name").get<std::string>())
+            };
+            ok &= AddStation(station);
+            if (!ok) {
+                throw std::runtime_error("Could not add station " + station.id );
+            }
+        }
+
+        // Add Lines
+        for (auto&& lineJson : src.at("lines")) {
+            Line line {
+                std::move(lineJson.at("line_id").get<std::string>()),
+                std::move(lineJson.at("name").get<std::string>()),
+                {} // routes will be added
+            };
+            // Add Routes to Line
+            line.routes.reserve(lineJson.at("routes").size());
+            for(auto&& routeJson: lineJson.at("routes")) {
+                line.routes.emplace_back(Route {
+                    std::move(routeJson.at("route_id").get<std::string>()),
+                    std::move(routeJson.at("direction").get<std::string>()),
+                    std::move(routeJson.at("line_id").get<std::string>()),
+                    std::move(routeJson.at("start_station_id").get<std::string>()),
+                    std::move(routeJson.at("end_station_id").get<std::string>()),
+                    std::move(
+                        routeJson.at("route_stops").get<std::vector<std::string>>()
+                    ),
+                 });
+            }
+            ok &= AddLine(line);
+            if (!ok) {
+                throw std::runtime_error("Could not add line " + line.id);
+            }
+        }
+
+        // Set Travel Times
+        for (auto&& travelTimeJson: src.at("travel_times")) {
+            ok &= SetTravelTime(
+                std::move(travelTimeJson.at("start_station_id").get<std::string>()),
+                std::move(travelTimeJson.at("end_station_id").get<std::string>()),
+                std::move(travelTimeJson.at("travel_time").get<unsigned int>())
+            );
+        }
+
+        return ok;
+    }
 
     /*! \brief Add a station to the network.
      *
@@ -168,6 +238,148 @@ namespace NetworkMonitor {
 
         return routes;
     }
+        
+    /*! \brief Set the travel time between 2 adjacent stations.
+     *
+     *  \returns false if there was an error while setting the travel time
+     *           between the two stations.
+     *
+     *  The travel time is the same for all routes connecting the two stations
+     *  directly.
+     *
+     *  The two stations must be adjacent in at least one line route. The two
+     *  stations must already be in the network.
+     */
+    bool TransportNetwork::SetTravelTime(
+        const Id& stationA,
+        const Id& stationB,
+        const unsigned int travelTime
+    )
+    {
+        // Find the stations
+        const auto stationANode {GetStation(stationA)};
+        const auto stationBNode {GetStation(stationB)};
+        if (stationANode == nullptr || stationBNode == nullptr)
+        {
+            return false;
+        }
+
+        // Search all edges connecting A->B and B->A
+        // Making a psuedo function with lambda to avoid code duplication
+        bool foundAnyEdge {false};
+        auto setTravelTime {[&foundAnyEdge, &travelTime](auto from, auto to) {
+            for (auto& edge: from->edges) {
+                if (edge->nextStop == to) {
+                    edge->travelTime = travelTime;
+                    foundAnyEdge = true;
+                }
+            }
+        }};
+        setTravelTime(stationANode, stationBNode);
+        setTravelTime(stationBNode, stationANode);
+
+        return foundAnyEdge;
+    }
+
+    /*! \brief Get the travel time between 2 adjacent stations.
+     *
+     *  \returns 0 if the function could not find the travel time between the
+     *           two stations, or if station A and B are the same station.
+     *
+     *  The travel time is the same for all routes connecting the two stations
+     *  directly.
+     *
+     *  The two stations must be adjacent in at least one line route. The two
+     *  stations must already be in the network.
+     */
+    unsigned int TransportNetwork::GetTravelTime(
+        const Id& stationA,
+        const Id& stationB
+    ) const
+    {
+        // Find the stations.
+        const auto stationANode {GetStation(stationA)};
+        const auto stationBNode {GetStation(stationB)};
+        if (stationANode == nullptr || stationBNode == nullptr) {
+            return 0;
+        }
+
+        // Check if there is an edge A -> B, then B -> A.
+        // We can return early as soon as we find a match: Wwe know that the travel
+        // time from A to B is the same as the travel time from B to A, across all
+        // routes.
+        for (const auto& edge: stationANode->edges) {
+            if (edge->nextStop == stationBNode) {
+                return edge->travelTime;
+            }
+        }
+        for (const auto& edge: stationBNode->edges) {
+            if (edge->nextStop == stationANode) {
+                return edge->travelTime;
+            }
+        }
+        return 0;
+    }
+
+    /*! \brief Get the total travel time between any 2 stations, on a specific
+     *         route.
+     *
+     *  The total travel time is the cumulative sum of the travel times between
+     *  all stations between `stationA` and `stationB`.
+     *
+     *  \returns 0 if the function could not find the travel time between the
+     *           two stations, or if station A and B are the same station.
+     *
+     *  The two stations must be both served by the `route`. The two stations
+     *  must already be in the network.
+     */
+    unsigned int TransportNetwork::GetTravelTime(
+        const Id& line,
+        const Id& route,
+        const Id& stationA,
+        const Id& stationB
+    ) const
+    {
+        // Find the route
+        const auto routeInternal {GetRoute(line, route)};
+        if (routeInternal == nullptr)
+            return 0;
+
+        // Find the stations
+        const auto stationANode {GetStation(stationA)};
+        const auto stationBNode {GetStation(stationB)};
+        if (stationANode == nullptr || stationBNode == nullptr)
+            return 0;
+
+        // Go through the route looking for station A
+        unsigned int travelTime {0};
+        bool foundA {false};
+        for (const auto& stop: routeInternal->stops) {
+            // If we found station A, we start counting.
+            if (stop == stationANode) {
+                foundA = true;
+            }
+
+            // If we found station B, we return the cumulative travel time so far.
+            if (stop == stationBNode) {
+                return travelTime;
+            }
+
+            // Accummulate the travel time since we found station A..
+            if (foundA) {
+                auto edgeIt {stop->FindEdgeForRoute(routeInternal)};
+                if (edgeIt == stop->edges.end()) {
+                    // Unexpected: The station should definitely have an edge for
+                    //             this route.
+                    return 0;
+                }
+                travelTime += (*edgeIt)->travelTime;
+            }
+        }
+
+        // Did not find either station
+        return 0;
+    }
 
     /*! \brief Add a route to lineInternal
      *
@@ -219,6 +431,20 @@ namespace NetworkMonitor {
         return true;
     }
 
+    std::vector<
+        std::shared_ptr<TransportNetwork::GraphEdge>
+    >::const_iterator TransportNetwork::GraphNode::FindEdgeForRoute(
+        const std::shared_ptr<RouteInternal>& route
+    ) const
+    {
+        return std::find_if(
+            edges.begin(),
+            edges.end(),
+            [&route](const auto& edge) {
+                return edge->route == route;
+            }
+        );
+    }
     std::shared_ptr<TransportNetwork::GraphNode> TransportNetwork::GetStation(
         const Id& stationId
     ) const
@@ -228,5 +454,33 @@ namespace NetworkMonitor {
             return nullptr;
         }
         return it->second;
+    }
+
+    std::shared_ptr<TransportNetwork::LineInternal> TransportNetwork::GetLine(
+        const Id& lineId
+    ) const
+    {
+        auto lineIt {lines_.find(lineId)};
+        if (lineIt == lines_.end()) {
+            return nullptr;
+        }
+        return lineIt->second;
+    }
+
+    std::shared_ptr<TransportNetwork::RouteInternal> TransportNetwork::GetRoute(
+        const Id& lineId,
+        const Id& routeId
+    ) const
+    {
+        auto line {GetLine(lineId)};
+        if (line == nullptr) {
+            return nullptr;
+        }
+        const auto& routes {line->routes};
+        auto routeIt {routes.find(routeId)};
+        if (routeIt == routes.end()) {
+            return nullptr;
+        }
+        return routeIt->second;
     }
 } // NetworkMonitor

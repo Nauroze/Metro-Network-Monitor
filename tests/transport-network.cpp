@@ -351,185 +351,185 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_SUITE_END(); // GetRoutesServingStation
 
-// BOOST_AUTO_TEST_SUITE(TravelTime);
+BOOST_AUTO_TEST_SUITE(TravelTime);
 
-// BOOST_AUTO_TEST_CASE(basic)
-// {
-//     TransportNetwork nw {};
-//     bool ok {false};
+BOOST_AUTO_TEST_CASE(basic)
+{
+    TransportNetwork nw {};
+    bool ok {false};
 
-//     // Add a line with 1 route.
-//     // route0: 0 ---> 1 ---> 2
-//     Station station0 {
-//         "station_000",
-//         "Station Name 0",
-//     };
-//     Station station1 {
-//         "station_001",
-//         "Station Name 1",
-//     };
-//     Station station2 {
-//         "station_002",
-//         "Station Name 2",
-//     };
-//     Route route0 {
-//         "route_000",
-//         "inbound",
-//         "line_000",
-//         "station_000",
-//         "station_002",
-//         {"station_000", "station_001", "station_002"},
-//     };
-//     Line line {
-//         "line_000",
-//         "Line Name",
-//         {route0},
-//     };
-//     ok = true;
-//     ok &= nw.AddStation(station0);
-//     ok &= nw.AddStation(station1);
-//     ok &= nw.AddStation(station2);
-//     BOOST_REQUIRE(ok);
-//     ok = nw.AddLine(line);
-//     BOOST_REQUIRE(ok);
+    // Add a line with 1 route.
+    // route0: 0 ---> 1 ---> 2
+    Station station0 {
+        "station_000",
+        "Station Name 0",
+    };
+    Station station1 {
+        "station_001",
+        "Station Name 1",
+    };
+    Station station2 {
+        "station_002",
+        "Station Name 2",
+    };
+    Route route0 {
+        "route_000",
+        "inbound",
+        "line_000",
+        "station_000",
+        "station_002",
+        {"station_000", "station_001", "station_002"},
+    };
+    Line line {
+        "line_000",
+        "Line Name",
+        {route0},
+    };
+    ok = true;
+    ok &= nw.AddStation(station0);
+    ok &= nw.AddStation(station1);
+    ok &= nw.AddStation(station2);
+    BOOST_REQUIRE(ok);
+    ok = nw.AddLine(line);
+    BOOST_REQUIRE(ok);
 
-//     unsigned int travelTime {0};
+    unsigned int travelTime {0};
 
-//     // Get travel time before setting it.
-//     travelTime = nw.GetTravelTime(station0.id, station1.id);
-//     BOOST_CHECK_EQUAL(travelTime, 0);
+    // Get travel time before setting it.
+    travelTime = nw.GetTravelTime(station0.id, station1.id);
+    BOOST_CHECK_EQUAL(travelTime, 0);
 
-//     // Cannot set the travel time between non-adjacent stations.
-//     ok = nw.SetTravelTime(station0.id, station2.id, 1);
-//     BOOST_CHECK(!ok);
+    // Cannot set the travel time between non-adjacent stations.
+    ok = nw.SetTravelTime(station0.id, station2.id, 1);
+    BOOST_CHECK(!ok);
 
-//     // Set the travel time between adjacent stations.
-//     ok = nw.SetTravelTime(station0.id, station1.id, 2);
-//     BOOST_CHECK(ok);
-//     BOOST_CHECK_EQUAL(nw.GetTravelTime(station0.id, station1.id), 2);
+    // Set the travel time between adjacent stations.
+    ok = nw.SetTravelTime(station0.id, station1.id, 2);
+    BOOST_CHECK(ok);
+    BOOST_CHECK_EQUAL(nw.GetTravelTime(station0.id, station1.id), 2);
 
-//     // Set travel time between adjacend stations, even if they appear in the
-//     // reverse order in the route.
-//     ok = nw.SetTravelTime(station1.id, station0.id, 3);
-//     BOOST_CHECK(ok);
-//     BOOST_CHECK_EQUAL(nw.GetTravelTime(station1.id, station0.id), 3);
-// }
+    // Set travel time between adjacend stations, even if they appear in the
+    // reverse order in the route.
+    ok = nw.SetTravelTime(station1.id, station0.id, 3);
+    BOOST_CHECK(ok);
+    BOOST_CHECK_EQUAL(nw.GetTravelTime(station1.id, station0.id), 3);
+}
 
-// BOOST_AUTO_TEST_CASE(over_route)
-// {
-//     TransportNetwork nw {};
-//     bool ok {false};
+BOOST_AUTO_TEST_CASE(over_route)
+{
+    TransportNetwork nw {};
+    bool ok {false};
 
-//     // Add a line with 3 routes.
-//     // route0: 0 ---> 1 ---> 2 ---> 3
-//     // route1: 3 ---> 1 ---> 2
-//     // route2: 3 ---> 1 ---> 0
-//     Station station0 {
-//         "station_000",
-//         "Station Name 0",
-//     };
-//     Station station1 {
-//         "station_001",
-//         "Station Name 1",
-//     };
-//     Station station2 {
-//         "station_002",
-//         "Station Name 2",
-//     };
-//     Station station3 {
-//         "station_003",
-//         "Station Name 3",
-//     };
-//     Route route0 {
-//         "route_000",
-//         "inbound",
-//         "line_000",
-//         "station_000",
-//         "station_003",
-//         {"station_000", "station_001", "station_002", "station_003"},
-//     };
-//     Route route1 {
-//         "route_001",
-//         "inbound",
-//         "line_000",
-//         "station_003",
-//         "station_002",
-//         {"station_003", "station_001", "station_002"},
-//     };
-//     Route route2 {
-//         "route_002",
-//         "inbound",
-//         "line_000",
-//         "station_003",
-//         "station_000",
-//         {"station_003", "station_001", "station_000"},
-//     };
-//     Line line {
-//         "line_000",
-//         "Line Name",
-//         {route0, route1, route2},
-//     };
-//     ok = true;
-//     ok &= nw.AddStation(station0);
-//     ok &= nw.AddStation(station1);
-//     ok &= nw.AddStation(station2);
-//     ok &= nw.AddStation(station3);
-//     BOOST_REQUIRE(ok);
-//     ok = nw.AddLine(line);
-//     BOOST_REQUIRE(ok);
+    // Add a line with 3 routes.
+    // route0: 0 ---> 1 ---> 2 ---> 3
+    // route1: 3 ---> 1 ---> 2
+    // route2: 3 ---> 1 ---> 0
+    Station station0 {
+        "station_000",
+        "Station Name 0",
+    };
+    Station station1 {
+        "station_001",
+        "Station Name 1",
+    };
+    Station station2 {
+        "station_002",
+        "Station Name 2",
+    };
+    Station station3 {
+        "station_003",
+        "Station Name 3",
+    };
+    Route route0 {
+        "route_000",
+        "inbound",
+        "line_000",
+        "station_000",
+        "station_003",
+        {"station_000", "station_001", "station_002", "station_003"},
+    };
+    Route route1 {
+        "route_001",
+        "inbound",
+        "line_000",
+        "station_003",
+        "station_002",
+        {"station_003", "station_001", "station_002"},
+    };
+    Route route2 {
+        "route_002",
+        "inbound",
+        "line_000",
+        "station_003",
+        "station_000",
+        {"station_003", "station_001", "station_000"},
+    };
+    Line line {
+        "line_000",
+        "Line Name",
+        {route0, route1, route2},
+    };
+    ok = true;
+    ok &= nw.AddStation(station0);
+    ok &= nw.AddStation(station1);
+    ok &= nw.AddStation(station2);
+    ok &= nw.AddStation(station3);
+    BOOST_REQUIRE(ok);
+    ok = nw.AddLine(line);
+    BOOST_REQUIRE(ok);
 
-//     // Set all travel times.
-//     ok = true;
-//     ok &= nw.SetTravelTime(station0.id, station1.id, 1);
-//     ok &= nw.SetTravelTime(station1.id, station2.id, 2);
-//     ok &= nw.SetTravelTime(station2.id, station3.id, 3);
-//     ok &= nw.SetTravelTime(station3.id, station1.id, 4);
-//     BOOST_REQUIRE(ok);
+    // Set all travel times.
+    ok = true;
+    ok &= nw.SetTravelTime(station0.id, station1.id, 1);
+    ok &= nw.SetTravelTime(station1.id, station2.id, 2);
+    ok &= nw.SetTravelTime(station2.id, station3.id, 3);
+    ok &= nw.SetTravelTime(station3.id, station1.id, 4);
+    BOOST_REQUIRE(ok);
 
-//     // Check the cumulative travel times.
-//     unsigned int travelTime {0};
-//     // route0
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route0.id, station0.id, station1.id), 1
-//     );
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route0.id, station0.id, station2.id), 1 + 2
-//     );
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route0.id, station0.id, station3.id), 1 + 2 + 3
-//     );
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route0.id, station1.id, station3.id), 2 + 3
-//     );
-//     // route1
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route1.id, station3.id, station1.id), 4
-//     );
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route1.id, station3.id, station2.id), 4 + 2
-//     );
-//     // route2
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route2.id, station3.id, station1.id), 4
-//     );
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route2.id, station3.id, station0.id), 4 + 1
-//     );
-//     // Invalid routes
-//     // -- 3 -> 1 is possible, but only over route1 and route2.
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route0.id, station3.id, station1.id), 0
-//     );
-//     // -- 1 -> 0 is possible, but only over route3.
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route0.id, station1.id, station0.id), 0
-//     );
-//     BOOST_CHECK_EQUAL(
-//         nw.GetTravelTime(line.id, route0.id, station1.id, station1.id), 0
-//     );
-// }
+    // Check the cumulative travel times.
+    unsigned int travelTime {0};
+    // route0
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route0.id, station0.id, station1.id), 1
+    );
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route0.id, station0.id, station2.id), 1 + 2
+    );
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route0.id, station0.id, station3.id), 1 + 2 + 3
+    );
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route0.id, station1.id, station3.id), 2 + 3
+    );
+    // route1
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route1.id, station3.id, station1.id), 4
+    );
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route1.id, station3.id, station2.id), 4 + 2
+    );
+    // route2
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route2.id, station3.id, station1.id), 4
+    );
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route2.id, station3.id, station0.id), 4 + 1
+    );
+    // Invalid routes
+    // -- 3 -> 1 is possible, but only over route1 and route2.
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route0.id, station3.id, station1.id), 0
+    );
+    // -- 1 -> 0 is possible, but only over route3.
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route0.id, station1.id, station0.id), 0
+    );
+    BOOST_CHECK_EQUAL(
+        nw.GetTravelTime(line.id, route0.id, station1.id, station1.id), 0
+    );
+}
 
-// BOOST_AUTO_TEST_SUITE_END(); // TravelTime
+BOOST_AUTO_TEST_SUITE_END(); // TravelTime
 
 BOOST_AUTO_TEST_SUITE_END(); // class_TransportNetwork
 

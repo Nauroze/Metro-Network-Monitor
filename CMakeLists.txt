@@ -55,9 +55,11 @@ add_executable(network-monitor-test ${TEST_SOURCES})
 
 target_compile_features(network-monitor-test PRIVATE cxx_std_17)
 
-target_compile_definitions(network-monitor-test PRIVATE 
-                          TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
-                          TESTS_NETWORK_LAYOUT_JSON="${CMAKE_CURRENT_SOURCE_DIR}/tests/network-layout.json")
+target_compile_definitions(network-monitor-test 
+                          PRIVATE
+                            TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data" 
+                            TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
+                            TESTS_NETWORK_LAYOUT_JSON="${CMAKE_CURRENT_SOURCE_DIR}/tests/network-layout.json")
                           
 target_include_directories(network-monitor-test PRIVATE include/)
 
