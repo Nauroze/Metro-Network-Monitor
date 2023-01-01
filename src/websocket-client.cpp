@@ -157,9 +157,6 @@ void WebSocketClient::OnRead(
     size_t size
 )
 {
-    if (ec)
-        std::cerr << "OnRead Error: " << ec.message() << "\n";
-
     if(ec)
     {
         return;
@@ -177,9 +174,6 @@ void WebSocketClient::ReadMessage(
     const boost::system::error_code& ec
 )
 {
-    if (ec)
-        std::cerr << "ReadMessage Error: " << ec.message() << "\n";
-
     if (ec == boost::asio::error::operation_aborted)
     {
         if(m_onDisconnect && !m_closed)
@@ -189,6 +183,9 @@ void WebSocketClient::ReadMessage(
         return;
     }
 
+    if (ec)
+        std::cerr << "ReadMessage Error: " << ec.message() << "\n";
+    
     m_ws.async_read(m_readBuffer, 
         [this](auto ec, auto size)
         {
