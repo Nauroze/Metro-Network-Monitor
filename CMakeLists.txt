@@ -20,7 +20,6 @@ find_package(nlohmann_json REQUIRED)
 set(SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/src/file-downloader.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/transport-network.cpp"
-   "${CMAKE_CURRENT_SOURCE_DIR}/src/websocket-client.cpp"
    )
 
 add_library(network-monitor STATIC ${SOURCES})
