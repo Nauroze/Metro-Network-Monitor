@@ -19,6 +19,7 @@ find_package(nlohmann_json REQUIRED)
 
 set(SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/src/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/src/stomp-frame.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/transport-network.cpp"
    )
 
@@ -46,6 +47,7 @@ project(network-monitor-test)
 set(TEST_SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/tests/stomp-frame.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/transport-network.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/websocket-client.cpp"
    )
