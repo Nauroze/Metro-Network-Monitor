@@ -17,6 +17,8 @@ find_package(CURL REQUIRED)
 
 find_package(nlohmann_json REQUIRED)
 
+find_package(spdlog REQUIRED)
+
 set(SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/src/file-downloader.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/stomp-frame.cpp"
@@ -34,6 +36,7 @@ target_link_libraries(network-monitor
                       OpenSSL::OpenSSL
                       Boost::Boost
                       nlohmann_json::nlohmann_json
+                      spdlog::spdlog
                     PRIVATE
                       CURL::CURL)
 

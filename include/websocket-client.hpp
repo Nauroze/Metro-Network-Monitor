@@ -3,10 +3,13 @@
 
 #include <iostream>
 #include <string>
+
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/beast.hpp>
 #include <boost/beast/ssl/ssl_stream.hpp>
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
 
 namespace NetworkMonitor {
 
@@ -47,6 +50,8 @@ public:
         m_resolver {boost::asio::make_strand(ioc)},
         m_ws {boost::asio::make_strand(ioc), ctx}
     {
+        spdlog::info("WebSocketClient: New client for {}:{}{}",
+                m_url, m_port, m_endpoint);
     }
 
     /*! \brief Destructor.
@@ -76,6 +81,8 @@ public:
 
         // Start the chain of asynchronous callbacks.
         m_closed = false;
+        spdlog::info("WebSocketClient: Attempting to resolve {}:{}",
+                     m_url, m_port);
         m_resolver.async_resolve(m_url, m_port,
             [this](auto ec, auto resolverIt) {
                 OnResolve(ec, resolverIt);
@@ -95,6 +102,7 @@ public:
         std::function<void (boost::system::error_code)> onSend = nullptr
     )
     {
+        spdlog::info("WebSocketClient: Sending message");
         m_ws.async_write(boost::asio::buffer(message),
             [onSend](auto ec, auto) {
                 if (onSend) {
@@ -113,6 +121,7 @@ public:
         std::function<void (boost::system::error_code)> onClose = nullptr
     )
     {
+        spdlog::info("WebSocketClient: Closing connection");
         m_closed = true;
         m_ws.async_close(
             boost::beast::websocket::close_code::none,
@@ -148,11 +157,16 @@ public:
     )
     {
         if (ec) {
+            spdlog::error("WebSocketClient: Could not resolve server URL: {}",
+                ec.message());
             if (m_onConnect) {
                 m_onConnect(ec);
             }
             return;
         }
+
+        spdlog::info("WebSocketClient: Server URL resolved: {}",
+                     resolverIt->endpoint().address().to_string());
 
         // The following timeout only matters for the purpose of connecting to
         // the TCP socket. We will reset the timeout to a sensible default
@@ -164,6 +178,7 @@ public:
 
         // Connect to the TCP socket.
         // Note: The TCP layer is the lowest layer (WebSocket -> TLS -> TCP).
+        spdlog::info("WebSocketClient: Attempting connection to server");
         boost::beast::get_lowest_layer(m_ws).async_connect(*resolverIt,
             [this](auto ec) {
                 OnConnect(ec);
@@ -176,16 +191,35 @@ public:
     )
     {
         if (ec)
-            std::cerr << "OnConnect Error: " << ec.message() << "\n";
-
-        if (ec)
         {
+            spdlog::error("WebSocketClient: Could not connect to server: {}",
+                ec.message());
+
             if (m_onConnect)
             {
                 m_onConnect(ec);
             }
+            return;
         }
+        
+        // Now that the TCP socket is connected, we can reset the timeout to
+        // whatever Boost.Beast recommends.
+        // Note: The TCP layer is the lowest layer (WebSocket -> TLS -> TCP).
+        boost::beast::get_lowest_layer(m_ws).expires_never();
+        m_ws.set_option(
+            boost::beast::websocket::stream_base::timeout::suggested(
+                boost::beast::role_type::client
+            )
+        );
+        // Some clients require that we set the host name before the TLS
+        // handshake or the connection will fail. We use an OpenSSL function
+        // for that.
+        SSL_set_tlsext_host_name(
+            m_ws.next_layer().native_handle(),
+            m_url.c_str()
+        );
 
+        spdlog::info("WebSocketClient: Wait for TLS handshake");
         m_ws.next_layer().async_handshake(boost::asio::ssl::stream_base::client,
                                         [this](auto ec)
                                         {
@@ -197,18 +231,22 @@ public:
     void OnTLSHandshake(
         const boost::system::error_code& ec
     )
-    {
-        if (ec)
-            std::cerr << "OnTLSHandshake Error: " << ec.message() << "\n";
-        
+    {       
         if (ec)
         {
+            spdlog::error(
+                "WebSocketClient: Could not complete TLS handshake: {}",
+                ec.message()
+            );
             if (m_onConnect)
             {
                 m_onConnect(ec);
             }
+            return;
         }
-        
+        spdlog::info("WebSocketClient: TLS handshake completed");
+
+        spdlog::info("WebSocketClient: Wait for WebSocket handshake");
         m_ws.async_handshake(m_url, m_endpoint,
                             [this](auto ec)
                             {
@@ -222,20 +260,23 @@ public:
     )
     {
         if (ec)
-            std::cerr << "OnHandshake Error: " << ec.message() << "\n";
-
-        if (ec)
         {
+            spdlog::error(
+                "WebSocketClient: Could not complete WebSocket handshake: {}",
+                ec.message()
+            );
             if (m_onConnect)
             {
                 m_onConnect(ec);
             }
+            return;
         }
-
+        spdlog::info("WebSocketClient: WebSocket handshake completed");
+        
         // All message exchanges in text
         m_ws.text(true);
 
-        ReadMessage(ec);
+        ListenToIncomingMessage(ec);
 
         if(m_onConnect)
         {
@@ -252,6 +293,8 @@ public:
         {
             return;
         }
+        
+        spdlog::debug("WebSocketClient: Received {}-byte message", size);
 
         std::string message(boost::beast::buffers_to_string(m_readBuffer.data()));
         m_readBuffer.consume(size);
@@ -261,27 +304,27 @@ public:
         }
     }
 
-    void ReadMessage(
+    void ListenToIncomingMessage(
         const boost::system::error_code& ec
     )
     {
         if (ec == boost::asio::error::operation_aborted)
         {
+            spdlog::info(
+                "WebSocketClient: Stopped listening to incoming messages"
+            );
             if(m_onDisconnect && !m_closed)
             {
                 m_onDisconnect(ec);
             }
             return;
         }
-
-        if (ec)
-            std::cerr << "ReadMessage Error: " << ec.message() << "\n";
         
         m_ws.async_read(m_readBuffer, 
             [this](auto ec, auto size)
             {
                 OnRead(ec, size);
-                ReadMessage(ec);
+                ListenToIncomingMessage(ec);
             }
         );
     }

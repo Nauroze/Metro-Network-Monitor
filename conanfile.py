@@ -1,4 +1,4 @@
-from conans import ConanFile
+from conans import ConanFile, CMake
 
 class ConanPackage(ConanFile):
     name = 'network-monitor'
@@ -10,7 +10,9 @@ class ConanPackage(ConanFile):
         ('boost/1.78.0'),
         ('openssl/1.1.1h'),
         ('libcurl/7.73.0'),
-        ('nlohmann_json/3.9.1')
+        ('nlohmann_json/3.9.1'),
+        ('spdlog/1.8.1'),
+        ('zlib/1.2.13') 
     ]
 
     default_options = (
