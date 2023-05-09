@@ -21,6 +21,7 @@ find_package(spdlog REQUIRED)
 
 set(SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/src/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/src/stomp-client.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/stomp-frame.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/transport-network.cpp"
    )
@@ -50,9 +51,11 @@ project(network-monitor-test)
 set(TEST_SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/tests/stomp-client.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/stomp-frame.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/transport-network.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/websocket-client.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/tests/websocket-client-mock.cpp"
    )
 
 add_executable(network-monitor-test ${TEST_SOURCES})
@@ -69,7 +72,10 @@ target_include_directories(network-monitor-test PRIVATE include/)
 
 target_link_libraries(network-monitor-test PRIVATE
                       network-monitor
-                      Boost::Boost)
+                      Boost::Boost
+                      nlohmann_json::nlohmann_json
+                      spdlog::spdlog
+                      )
 
 if(MINGW)
   target_link_libraries(network-monitor-test PRIVATE ws2_32)

@@ -1,4 +1,4 @@
-#include "websocket-client.hpp"
+#include "websocket-client.h"
 #include "boost-mock.h"
 
 #include <boost/asio.hpp>

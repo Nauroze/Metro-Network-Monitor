@@ -1,7 +1,7 @@
 #ifndef NETWORK_MONITOR_TESTS_BOOST_MOCK_H
 #define NETWORK_MONITOR_TESTS_BOOST_MOCK_H
 
-#include <websocket-client.hpp>
+#include <websocket-client.h>
 
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
