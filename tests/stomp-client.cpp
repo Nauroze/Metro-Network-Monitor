@@ -1,5 +1,6 @@
 #include "websocket-client-mock.h"
 
+#include "env.h"
 #include "stomp-client.h"
 #include "websocket-client.h"
 
@@ -11,6 +12,7 @@
 #include <string>
 
 using NetworkMonitor::BoostWebSocketClient;
+using NetworkMonitor::GetEnvVar;
 using NetworkMonitor::MockWebSocketClientForStomp;
 using NetworkMonitor::StompClient;
 using NetworkMonitor::StompClientError;
@@ -572,18 +574,6 @@ BOOST_AUTO_TEST_CASE(subscribe_to_invalid_endpoint, *timeout {1})
     client.Connect(username, password, onConnect, onDisconnect);
     ioc.run();
     BOOST_CHECK(calledOnDisconnect);
-}
-
-static std::string GetEnvVar(
-    const std::string& envVar,
-    const std::string& defaultValue = ""
-)
-{
-    const char* value {std::getenv(envVar.c_str())};
-    if (defaultValue == "") {
-        BOOST_REQUIRE(value != nullptr);
-    }
-    return value != nullptr ? value : defaultValue;
 }
 
 BOOST_AUTO_TEST_CASE(live, *timeout {3})

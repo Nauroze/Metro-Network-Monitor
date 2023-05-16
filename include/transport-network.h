@@ -1,9 +1,14 @@
+#ifndef NETWORK_MONITOR_TRANSPORT_NETWORK_H
+#define NETWORK_MONITOR_TRANSPORT_NETWORK_H
+
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include <nlohmann/json.hpp>
 
-#include <string>
-#include <vector>
 #include <memory>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace NetworkMonitor {
 
@@ -24,10 +29,7 @@ struct Station {
      *
      *  Two stations are "equal" if they have the same ID.
      */
-    bool operator==(const Station& other) const
-    {
-        return this->id == other.id;
-    }
+    bool operator==(const Station& other) const;
 };
 
 /*! \brief Network route
@@ -59,10 +61,7 @@ struct Route {
      *
      *  Two routes are "equal" if they have the same ID.
      */
-    bool operator==(const Route& other) const
-    {
-        return this->id == other.id;
-    }
+    bool operator==(const Route& other) const;
 };
 
 /*! \brief Network line
@@ -84,10 +83,7 @@ struct Line {
      *
      *  Two lines are "equal" if they have the same ID.
      */
-    bool operator==(const Line& other) const
-    {
-        return this->id == other.id;
-    }
+    bool operator==(const Line& other) const;
 };
 
 /*! \brief Passenger event
@@ -100,7 +96,13 @@ struct PassengerEvent {
 
     Id stationId {};
     Type type {Type::In};
+    boost::posix_time::ptime timestamp {};
 };
+
+void from_json(
+    const nlohmann::json& src,
+    PassengerEvent& dst
+);
 
 /*! \brief Underground network representation
  */
@@ -267,66 +269,75 @@ public:
         const Id& stationB
     ) const;
 
-    private:
-    // Forward declarations
+private:
+    // Forward-declare all internal structs.
     struct GraphNode;
     struct GraphEdge;
     struct RouteInternal;
     struct LineInternal;
 
-    // Node are the internal representation of stations
+    // Graph node
+    // We use this as the internal station representation.
     struct GraphNode {
         Id id {};
         std::string name {};
-        int32_t passengerCount {0};
+        long long int passengerCount {0};
         std::vector<std::shared_ptr<GraphEdge>> edges {};
 
-        // Find edge for specific route
-        std::vector<std::shared_ptr<GraphEdge>
+        // Find the edge for a specific line route.
+        std::vector<
+            std::shared_ptr<GraphEdge>
         >::const_iterator FindEdgeForRoute(
             const std::shared_ptr<RouteInternal>& route
         ) const;
     };
 
-    // Each edge represents a route
-    struct GraphEdge{
+    // Graph edge
+    // We keep one edge for each route going through a node, even if multiple
+    // routes go through the same node.
+    struct GraphEdge {
         std::shared_ptr<RouteInternal> route {nullptr};
         std::shared_ptr<GraphNode> nextStop {nullptr};
-        unsigned travelTime {0};
+        unsigned int travelTime {0};
     };
 
-    // Internal route represenation
+    // Internal route representation
     struct RouteInternal {
         Id id {};
         std::shared_ptr<LineInternal> line {nullptr};
         std::vector<std::shared_ptr<GraphNode>> stops {};
     };
 
-    // Internal line represenation
+    // Internal line representation
+    // We map line routes by their ID.
     struct LineInternal {
         Id id {};
         std::string name {};
         std::unordered_map<Id, std::shared_ptr<RouteInternal>> routes {};
     };
-    
+
+    // Map station and lines by ID. We do not map line routes here, as they
+    // are mapped within each line representation.
     std::unordered_map<Id, std::shared_ptr<GraphNode>> stations_ {};
     std::unordered_map<Id, std::shared_ptr<LineInternal>> lines_ {};
 
-    // Private methods
-    private:
-    std::shared_ptr<TransportNetwork::GraphNode> GetStation(
+    // Get station by ID.
+    std::shared_ptr<GraphNode> GetStation(
         const Id& stationId
     ) const;
 
+    // Get line by ID.
     std::shared_ptr<LineInternal> GetLine(
         const Id& lineId
     ) const;
 
+    // Get route by ID.
     std::shared_ptr<RouteInternal> GetRoute(
         const Id& lineId,
         const Id& routeId
     ) const;
 
+    // This function adds a route to the internal line representation.
     bool AddRouteToLine(
         const Route& route,
         const std::shared_ptr<LineInternal>& lineInternal
@@ -334,3 +345,5 @@ public:
 };
 
 } // namespace NetworkMonitor
+
+#endif // NETWORK_MONITOR_TRANSPORT_NETWORK_H

@@ -20,7 +20,9 @@ find_package(nlohmann_json REQUIRED)
 find_package(spdlog REQUIRED)
 
 set(SOURCES 
+   "${CMAKE_CURRENT_SOURCE_DIR}/src/env.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/src/network-monitor.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/stomp-client.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/stomp-frame.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/src/transport-network.cpp"
@@ -51,6 +53,7 @@ project(network-monitor-test)
 set(TEST_SOURCES 
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/file-downloader.cpp"
+   "${CMAKE_CURRENT_SOURCE_DIR}/tests/network-monitor.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/stomp-client.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/stomp-frame.cpp"
    "${CMAKE_CURRENT_SOURCE_DIR}/tests/transport-network.cpp"
