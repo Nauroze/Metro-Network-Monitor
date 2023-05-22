@@ -5,6 +5,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include <limits>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -339,6 +340,25 @@ public:
         const Id& stationB
     ) const;
 
+    
+    /*! \brief Get a quiet travel route alternative to the fastest route, from
+     *         station A to station B.
+     *
+     *  \param maxSlowdownPc    Maximum travel time increase when picking a
+     *                          quiet route.
+     *  \param minQuietnessPc   Minimum decrease in route crowding that makes a
+     *                          quiet route worth the travel time increase.
+     *  \param maxNPaths        Maximum number of paths to explore. If set,
+     *                          this method may yield suboptimal results.
+     */
+    TravelRoute GetQuietTravelRoute(
+        const Id& stationA,
+        const Id& stationB,
+        const double maxSlowdownPc,
+        const double minQuietnessPc,
+        const size_t maxNPaths = std::numeric_limits<size_t>::max()
+    ) const;
+
 private:
     // Forward-declare all internal structs.
     struct GraphNode;
@@ -462,6 +482,21 @@ private:
         const PathStopDist& stopA,
         const std::shared_ptr<GraphNode>& stationB,
         const std::unordered_set<PathStop, PathStopHash>& excludedStops = {}
+    ) const;
+
+    // Internal function to get all the paths (up to maxNPaths) that meet a
+    // certain travel time criterion:
+    // bestTravelTime <= travelTime <= bestTravelTime * (1 + maxSlowdownPc)
+    std::vector<Path> GetFastestTravelRoutes(
+        const std::shared_ptr<TransportNetwork::GraphNode>& stationA,
+        const std::shared_ptr<TransportNetwork::GraphNode>& stationB,
+        const double maxSlowdownPc,
+        const size_t maxNPaths = std::numeric_limits<size_t>::max()
+    ) const;
+
+    // Get the total crowding over a given path.
+    unsigned int GetPathCrowding(
+        const Path& path
     ) const;
 };
 
