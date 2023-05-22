@@ -470,82 +470,14 @@ TravelRoute TransportNetwork::GetFastestTravelRoute(
         };
     }
 
-    // Supporting data structures for Dijkstra's algorithm.
-    // - Distance of any station from A, through a specific route.
-    std::unordered_map<PathStop, unsigned int, PathStopHash> distFromA {};
-    distFromA[{stationA, nullptr}] = 0;
-    // - The previous stop in the shortest path.
-    std::unordered_map<PathStop, PathStop, PathStopHash> previousStop {};
-    // - The priority queue of stops to visit.
-    std::priority_queue<
-        PathStopDist,
-        std::vector<PathStopDist>,
-        PathStopDistCmp
-    > nodesToVisit;
-    nodesToVisit.push({{stationA, nullptr}, 0});
-
-    // Dijkstra's algorithm
-    while (!nodesToVisit.empty()) {
-        // Remove the node from the priority queue.
-        auto [currStop, currentDistFromA] = nodesToVisit.top();
-        const auto& currStation {currStop.node};
-        const auto& edgeToCurrStation {currStop.edge};
-        nodesToVisit.pop();
-
-        // Check if we found station B.
-        if (currStation == stationB) {
-            // We do not want to break here! We may still have some nodes in
-            // the queue that may lead to a better path to station B.
-            continue;
-        }
-
-        // Explore the neighborhood.
-        for (const auto& neighborEdge: currStation->edges) {
-            PathStop neighbor {neighborEdge->nextStop, neighborEdge};
-
-            // Calculate the distance of the neighbor from station A.
-            auto neighborDistFromA {currentDistFromA + neighborEdge->travelTime};
-            if (edgeToCurrStation != nullptr &&
-                edgeToCurrStation->route != neighborEdge->route
-            ) {
-                // We add a penalty of 5 minutes if we need to change route to
-                // get to our neighbor.
-                neighborDistFromA += 5;
-            }
-
-            // Update our records of the fastest way to get to the neighbor.
-            const auto neighborDistFromAIt {distFromA.find(neighbor)};
-            if (neighborDistFromAIt == distFromA.end()) {
-                // First time we see this neighbor.
-                distFromA[neighbor] = neighborDistFromA;
-                previousStop[neighbor] = currStop;
-                nodesToVisit.push({neighbor, neighborDistFromA});
-            } else {
-                // We already saw this neighbor, and only update our records if
-                // it's worth it.
-                if (neighborDistFromA < neighborDistFromAIt->second) {
-                    distFromA[neighbor] = neighborDistFromA;
-                    previousStop[neighbor] = currStop;
-
-                    // Note: Because there may have been a change of routes in
-                    //       the path to this neighbor, we need to re-walk the
-                    //       path from here onwards.
-                    nodesToVisit.push({neighbor, neighborDistFromA});
-                }
-            }
-        }
-    }
-
-    // Valid paths to station B.
-    std::vector<PathStopDist> pathsToB {};
-    for (const auto& [pathStop, distance]: distFromA) {
-        if (pathStop.node == stationB) {
-            pathsToB.push_back({pathStop, distance});
-        }
-    }
+    // Get the fastest path from A to B.
+    const auto path {GetFastestTravelRoute(
+        {{stationA, nullptr}, 0},
+        stationB
+    )};
 
     // Corner case: There is no valid path between A and B.
-    if (pathsToB.empty()) {
+    if (path.empty()) {
         return TravelRoute {
             stationAId,
             stationBId,
@@ -554,32 +486,28 @@ TravelRoute TransportNetwork::GetFastestTravelRoute(
         };
     }
 
-    // Sort the pathsToB vector to get the fastest path from A to B.
-    std::sort(pathsToB.begin(), pathsToB.end(), PathStopDistCmp {});
-    auto& fastestPathToB {pathsToB.back()};
-
     // Assemble the path.
     // Note: We go in reverse order, from B to A, because this is how the
     //       previousStop map is structured.
+    const auto& totalTravelTime {path.back().second};
     TravelRoute travelRoute {
         stationAId,
         stationBId,
-        fastestPathToB.second,
+        totalTravelTime,
         {},
     };
-    auto& stop {fastestPathToB.first};
-    while (stop.node != stationA) {
-        const auto& prevStop {previousStop.at(stop)};
+    travelRoute.steps.reserve(path.size());
+    for (size_t idx {1}; idx < path.size(); ++idx) {
+        const auto& prevStop {path[idx - 1].first};
+        const auto& currStop {path[idx].first};
         travelRoute.steps.push_back(TravelRoute::Step {
             prevStop.node->id,
-            stop.node->id,
-            stop.edge->route->line->id,
-            stop.edge->route->id,
-            stop.edge->travelTime,
+            currStop.node->id,
+            currStop.edge->route->line->id,
+            currStop.edge->route->id,
+            currStop.edge->travelTime,
         });
-        stop = prevStop;
     }
-    std::reverse(travelRoute.steps.begin(), travelRoute.steps.end());
     return travelRoute;
 }
 
@@ -623,6 +551,14 @@ bool TransportNetwork::PathStopDistCmp::operator()(
 ) const
 {
     return a.second > b.second;
+}
+
+bool TransportNetwork::PathCmp::operator()(
+    const TransportNetwork::Path& a,
+    const TransportNetwork::Path& b
+) const
+{
+    return a.back().second > b.back().second;
 }
 
 std::shared_ptr<TransportNetwork::GraphNode> TransportNetwork::GetStation(
@@ -708,4 +644,120 @@ bool TransportNetwork::AddRouteToLine(
     lineInternal->routes[route.id] = std::move(routeInternal);
 
     return true;
+}
+
+TransportNetwork::Path TransportNetwork::GetFastestTravelRoute(
+    const TransportNetwork::PathStopDist& stopA,
+    const std::shared_ptr<TransportNetwork::GraphNode>& stationB,
+    const std::unordered_set<
+        TransportNetwork::PathStop, TransportNetwork::PathStopHash
+    >& excludedStops
+) const
+{
+    const auto& stationA {stopA.first.node};
+
+    // Corner case: A and B are the same station.
+    if (stationA == stationB) {
+        return {{{stationA, nullptr}, 0}};
+    }
+
+    // Supporting data structures for Dijkstra's algorithm.
+    // - Distance of any station from A, through a specific route.
+    std::unordered_map<PathStop, unsigned int, PathStopHash> distFromA {};
+    distFromA[stopA.first] = stopA.second;
+    // - The previous stop in the shortest path.
+    std::unordered_map<PathStop, PathStop, PathStopHash> previousStop {};
+    // - The priority queue of stops to visit.
+    std::priority_queue<
+        PathStopDist,
+        std::vector<PathStopDist>,
+        PathStopDistCmp
+    > nodesToVisit;
+    nodesToVisit.push(stopA);
+
+    // Dijkstra's algorithm
+    while (!nodesToVisit.empty()) {
+        // Remove the node from the priority queue.
+        auto [currStop, currentDistFromA] = nodesToVisit.top();
+        const auto& currStation {currStop.node};
+        const auto& edgeToCurrStation {currStop.edge};
+        nodesToVisit.pop();
+
+        // Check if we found station B.
+        if (currStation == stationB) {
+            // We do not want to break here! We may still have some nodes in
+            // the queue that may lead to a better path to station B.
+            continue;
+        }
+
+        // Explore the neighborhood.
+        for (const auto& neighborEdge: currStation->edges) {
+            PathStop neighbor {neighborEdge->nextStop, neighborEdge};
+            if (excludedStops.find(neighbor) != excludedStops.end()) {
+                continue;
+            }
+
+            // Calculate the distance of the neighbor from station A.
+            auto neighborDistFromA {currentDistFromA + neighborEdge->travelTime};
+            if (edgeToCurrStation != nullptr &&
+                edgeToCurrStation->route != neighborEdge->route
+            ) {
+                // We add a penalty of 5 minutes if we need to change route to
+                // get to our neighbor.
+                neighborDistFromA += 5;
+            }
+
+            // Update our records of the fastest way to get to the neighbor.
+            const auto neighborDistFromAIt {distFromA.find(neighbor)};
+            if (neighborDistFromAIt == distFromA.end()) {
+                // First time we see this neighbor.
+                distFromA[neighbor] = neighborDistFromA;
+                previousStop[neighbor] = currStop;
+                nodesToVisit.push({neighbor, neighborDistFromA});
+            } else {
+                // We already saw this neighbor, and only update our records if
+                // it's worth it.
+                if (neighborDistFromA < neighborDistFromAIt->second) {
+                    distFromA[neighbor] = neighborDistFromA;
+                    previousStop[neighbor] = currStop;
+
+                    // Note: Because there may have been a change of routes in
+                    //       the path to this neighbor, we need to re-walk the
+                    //       path from here onwards.
+                    nodesToVisit.push({neighbor, neighborDistFromA});
+                }
+            }
+        }
+    }
+
+    // Valid paths to station B.
+    std::vector<PathStopDist> pathsToB {};
+    for (const auto& [pathStop, distance]: distFromA) {
+        if (pathStop.node == stationB) {
+            pathsToB.push_back({pathStop, distance});
+        }
+    }
+
+    // Check if we found no valid path between A and B.
+    if (pathsToB.empty()) {
+        return {};
+    }
+
+    // Sort the pathsToB vector to get the fastest path from A to B.
+    std::sort(pathsToB.begin(), pathsToB.end(), PathStopDistCmp {});
+    auto& fastestPathToB {pathsToB.back()};
+
+    // Assemble the path.
+    // Note: We go in reverse order, from B to A, because this is how the
+    //       previousStop map is structured.
+    Path path {fastestPathToB};
+    auto& stop {fastestPathToB.first};
+    while (stop.node != stationA) {
+        stop = previousStop.at(stop);
+        const auto& distance {distFromA.at(stop)};
+        path.push_back({stop, distance});
+    }
+    std::reverse(path.begin(), path.end());
+
+    return path;
 }

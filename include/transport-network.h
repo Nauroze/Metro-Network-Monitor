@@ -9,6 +9,7 @@
 #include <ostream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -416,6 +417,14 @@ private:
         ) const;
     };
 
+    using Path = std::vector<PathStopDist>;
+    struct PathCmp {
+        bool operator()(
+            const Path& a,
+            const Path& b
+        ) const;
+    };
+
     // Map station and lines by ID. We do not map line routes here, as they
     // are mapped within each line representation.
     std::unordered_map<Id, std::shared_ptr<GraphNode>> stations_ {};
@@ -442,6 +451,18 @@ private:
         const Route& route,
         const std::shared_ptr<LineInternal>& lineInternal
     );
+    
+    // Internal version of GetFastestTravelRoute.
+    // We pass station A as a PathStopDist instance instead of as a GraphNode
+    // pointer to allow for warm starts, i.e. paths that start with a pre-set
+    // distance-from-origin and incoming route.
+    // We also pass a set of excluded stops in case we want to skip some
+    // stations from the paht-finding algorithm.
+    Path GetFastestTravelRoute(
+        const PathStopDist& stopA,
+        const std::shared_ptr<GraphNode>& stationB,
+        const std::unordered_set<PathStop, PathStopHash>& excludedStops = {}
+    ) const;
 };
 
 } // namespace NetworkMonitor
