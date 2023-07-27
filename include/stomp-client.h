@@ -167,6 +167,7 @@ public:
     )
     {
         spdlog::info("StompClient: Closing connection to STOMP server");
+
         subscriptions_.clear();
         ws_.Close(
             [this, onClose](auto ec) {

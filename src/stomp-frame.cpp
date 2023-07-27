@@ -17,7 +17,8 @@ using NetworkMonitor::StompHeader;
 
 using Headers = StompFrame::Headers;
 
-// Utility function to generate a boost::bimap.
+// Utility function to generate a boost::bimap, i.e bidirectional map
+// example usage: MakeBimap<std::string, int>
 template <typename L, typename R>
 static boost::bimap<L, R> MakeBimap(
     std::initializer_list<typename boost::bimap<L, R>::value_type> list
@@ -349,6 +350,7 @@ StompError StompFrame::ParseAndValidateFrame(const std::string_view frame)
     return ValidateFrame();
 }
 
+// A frame consists of a command, a set of optional headers and an optional body.
 StompError StompFrame::ParseFrame(const std::string_view frame)
 {
     const std::string_view plain {frame};

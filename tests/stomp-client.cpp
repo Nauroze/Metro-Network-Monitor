@@ -50,6 +50,7 @@ BOOST_AUTO_TEST_SUITE(stomp_client);
 
 BOOST_AUTO_TEST_SUITE(enum_class_StompClientError);
 
+// Testing if operator<< to ostream works for all these errors. 
 BOOST_AUTO_TEST_CASE(ostream)
 {
     std::stringstream invalidSs;
