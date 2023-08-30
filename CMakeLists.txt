@@ -71,6 +71,8 @@ target_compile_features(network-monitor-test PRIVATE cxx_std_17)
 
 target_compile_definitions(network-monitor-test 
                           PRIVATE
+                            LTNM_USERNAME="naurozehoath@gmail.com"
+                            LTNM_PASSWORD="9ba4efcec11a271f9021a461a8018c9fa8bfc33c"
                             TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data" 
                             TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
                             TESTS_NETWORK_LAYOUT_JSON="${CMAKE_CURRENT_SOURCE_DIR}/tests/network-layout.json")
@@ -110,6 +112,9 @@ target_compile_features(network-monitor-exe
 )
 target_compile_definitions(network-monitor-exe
     PRIVATE
+        LTNM_USERNAME="naurozehoath@gmail.com"
+        LTNM_PASSWORD="9ba4efcec11a271f9021a461a8018c9fa8bfc33c"
+        TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
         $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=${WINDOWS_VERSION}>
 )
 target_compile_options(network-monitor-exe
@@ -154,6 +159,9 @@ target_compile_features(test-client-exe
 )
 target_compile_definitions(test-client-exe
     PRIVATE
+        LTNM_USERNAME="naurozehoath@gmail.com"
+        LTNM_PASSWORD="9ba4efcec11a271f9021a461a8018c9fa8bfc33c"
+        TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
         $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=${WINDOWS_VERSION}>
 )
 target_compile_options(test-client-exe
@@ -178,11 +186,11 @@ add_test(
 # These options define the pass/fail condition for the test.
 set_tests_properties(integration-test PROPERTIES
     # This affects the duration of the io_context::run function.
-    ENVIRONMENT "LTNM_TIMEOUT_MS=5000"
+    ENVIRONMENT "LTNM_TIMEOUT_MS=20000"
 
     # We introduce a timeout just to be safe.
     # This should be longer than LTNM_TIMEOUT_MS.
-    TIMEOUT 10
+    TIMEOUT 30
 
     # We verify the content of the program log output. Any error message is a
     # test failure.

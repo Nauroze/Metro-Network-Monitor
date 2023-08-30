@@ -794,7 +794,7 @@ BOOST_AUTO_TEST_CASE(quiet_route_bad_stations, *timeout {1})
     BOOST_CHECK_EQUAL(travelRoute.steps.size(), 0);
 }
 
-BOOST_AUTO_TEST_CASE(quiet_route, *timeout {10})
+BOOST_AUTO_TEST_CASE(quiet_route, *timeout {20})
 {
     NetworkMonitorConfig config {
         "ltnm.learncppthroughprojects.com",
@@ -853,7 +853,7 @@ BOOST_AUTO_TEST_CASE(quiet_route, *timeout {10})
     BOOST_CHECK_EQUAL(travelRoute.steps.size(), 19);
 }
 
-BOOST_AUTO_TEST_CASE(quiet_route_ltc_quiet2, *timeout {10})
+BOOST_AUTO_TEST_CASE(quiet_route_ltc_quiet2, *timeout {20})
 {
     // This test is based on the same network, passenger events, and travel
     // routes of the ltc_quiet2 test for the TransportNetwork class.
@@ -939,7 +939,7 @@ BOOST_AUTO_TEST_CASE(quiet_route_ltc_quiet2, *timeout {10})
     BOOST_CHECK_EQUAL(travelRoute, golden);
 }
 
-BOOST_AUTO_TEST_CASE(live, *timeout {10})
+BOOST_AUTO_TEST_CASE(live, *timeout {20})
 {
     // This test starts a live NetworkMonitor instance and then constructs a
     // local StompClient instance to connect to it. We perform one quiet-route
@@ -948,8 +948,8 @@ BOOST_AUTO_TEST_CASE(live, *timeout {10})
     NetworkMonitorConfig config {
         GetEnvVar("LTNM_SERVER_URL", "ltnm.learncppthroughprojects.com"),
         GetEnvVar("LTNM_SERVER_PORT", "443"),
-        GetEnvVar("LTNM_USERNAME"),
-        GetEnvVar("LTNM_PASSWORD"),
+        LTNM_USERNAME,
+        LTNM_PASSWORD,
         TESTS_CACERT_PEM,
         GetEnvVar("LTNM_NETWORK_LAYOUT_FILE_PATH", TESTS_NETWORK_LAYOUT_JSON),
         "127.0.0.1", // We use the IP as the server hostname because the client

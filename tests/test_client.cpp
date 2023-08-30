@@ -48,7 +48,7 @@ int main()
 
     // We sleep waiting for the NetworkMonitor to become available.
     spdlog::info("TestStompClient: Sleeping...");
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     spdlog::info("TestStompClient: Awake");
 
     // Configure the STOMP client.
@@ -63,7 +63,7 @@ int main()
     boost::asio::ssl::context ctx {
         boost::asio::ssl::context::tlsv12_client
     };
-    ctx.load_verify_file(GetEnvVar("LTNM_CACERT_PEM", "cacert.pem"));
+    ctx.load_verify_file(TESTS_CACERT_PEM);
     StompClient<BoostWebSocketClient> client {
         url,
         endpoint,

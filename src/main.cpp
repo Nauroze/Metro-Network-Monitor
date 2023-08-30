@@ -18,9 +18,9 @@ int main()
     NetworkMonitorConfig config {
         GetEnvVar("LTNM_SERVER_URL", "ltnm.learncppthroughprojects.com"),
         GetEnvVar("LTNM_SERVER_PORT", "443"),
-        GetEnvVar("LTNM_USERNAME"),
-        GetEnvVar("LTNM_PASSWORD"),
-        GetEnvVar("LTNM_CACERT_PATH", "cacert.pem"),
+        LTNM_USERNAME,
+        LTNM_PASSWORD,
+        TESTS_CACERT_PEM,
         GetEnvVar("LTNM_NETWORK_LAYOUT_FILE_PATH", ""),
         "127.0.0.1", // We use the IP as the server hostname because the client
                      // will connect to 127.0.0.1 directly, without host name

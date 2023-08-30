@@ -753,8 +753,8 @@ BOOST_AUTO_TEST_CASE(live, *timeout {3})
     boost::asio::io_context ioc {};
     boost::asio::ssl::context ctx {boost::asio::ssl::context::tlsv12_client};
     ctx.load_verify_file(TESTS_CACERT_PEM);
-    const std::string username {GetEnvVar("LTNM_USERNAME")};
-    const std::string password {GetEnvVar("LTNM_PASSWORD")};
+    const std::string username {LTNM_USERNAME};
+    const std::string password {LTNM_PASSWORD};
 
     StompClient<BoostWebSocketClient> client {
         url,
