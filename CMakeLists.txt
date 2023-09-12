@@ -196,3 +196,59 @@ set_tests_properties(integration-test PROPERTIES
     # test failure.
     FAIL_REGULAR_EXPRESSION "\\[error\\]"
 )
+
+# Playground applications
+add_executable(playground-client "${CMAKE_CURRENT_SOURCE_DIR}/playground/playground-client.cpp")
+
+target_compile_definitions(playground-client
+    PRIVATE
+        LTNM_USERNAME="naurozehoath@gmail.com"
+        LTNM_PASSWORD="9ba4efcec11a271f9021a461a8018c9fa8bfc33c"
+        TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
+        TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data" 
+)
+
+target_link_libraries(playground-client
+    PRIVATE
+        network-monitor
+        nlohmann_json::nlohmann_json
+        OpenSSL::OpenSSL
+        spdlog::spdlog
+)
+
+add_executable(playground-network-monitor "${CMAKE_CURRENT_SOURCE_DIR}/playground/playground-network-monitor.cpp")
+
+target_compile_definitions(playground-network-monitor
+    PRIVATE
+        LTNM_USERNAME="naurozehoath@gmail.com"
+        LTNM_PASSWORD="9ba4efcec11a271f9021a461a8018c9fa8bfc33c"
+        TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
+        TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data" 
+)
+
+target_link_libraries(playground-network-monitor
+    PRIVATE
+        network-monitor
+        nlohmann_json::nlohmann_json
+        OpenSSL::OpenSSL
+        spdlog::spdlog
+)
+
+add_executable(network-monitor-2routes "${CMAKE_CURRENT_SOURCE_DIR}/playground/network-monitor-2routes.cpp")
+
+target_compile_definitions(network-monitor-2routes
+    PRIVATE
+        LTNM_USERNAME="naurozehoath@gmail.com"
+        LTNM_PASSWORD="9ba4efcec11a271f9021a461a8018c9fa8bfc33c"
+        TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
+        TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data"
+        PLAYGROUND_LAYOUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/playground/network_fastest_path_2routes.json" 
+)
+
+target_link_libraries(network-monitor-2routes
+    PRIVATE
+        network-monitor
+        nlohmann_json::nlohmann_json
+        OpenSSL::OpenSSL
+        spdlog::spdlog
+)

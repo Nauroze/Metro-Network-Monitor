@@ -79,7 +79,7 @@ std::ostream& NetworkMonitor::operator<<(
     const TravelRoute& r
 )
 {
-    os << nlohmann::json(r);
+    os << nlohmann::json(r).dump(4);
     return os;
 }
 
