@@ -18,7 +18,7 @@ jobs:
       run: pip3 install conan==1.53.0
 
     - name: Setup CMake
-      uses: actions/setup-cmake@v2
+      uses: actions/setup-cmake@v1
 
     - name: Create Build Directory
       run: mkdir build
