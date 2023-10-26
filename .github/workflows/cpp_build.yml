@@ -1,0 +1,41 @@
+name: Metro Network Monitor CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Conan
+      run: pip3 install conan==1.53.0
+
+    - name: Setup CMake
+      uses: actions/setup-cmake@v2
+
+    - name: Create Build Directory
+      run: mkdir build
+      working-directory: ./ 
+
+    - name: Conan Install
+      run: conan install .. --build=missing
+      working-directory: ./build
+
+    - name: Configure CMake
+      run: cmake ..
+      working-directory: ./build
+
+    - name: Build Project
+      run: cmake --build .
+      working-directory: ./build
+
+    - name: Run Tests
+      run: ./network-monitor-test
+      working-directory: ./build
