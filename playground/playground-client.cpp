@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 
 #include <boost/asio.hpp>
@@ -11,7 +12,7 @@
 int main()
 {
     // Create a STOMP client
-    const std::string url {"127.0.0.1"};
+    const std::string url {"localhost"};
     const std::string endpoint {"/quiet-route"};
     const std::string port {"8042"};
     const std::string username {"username"};
@@ -39,6 +40,7 @@ int main()
             spdlog::info("QuietRouteClient: /quiet-route request sent");
         }
     };
+
     //When connected, send the quiet route request to server.
     auto onConnect{
         [&client, &onSend](auto ec){
@@ -48,14 +50,18 @@ int main()
                 throw std::runtime_error("Failed");
             }
             spdlog::info("QuietRouteClient: Connected");
-            
-            const std::string message {
-                nlohmann::json {
-                    {"start_station_id", "station_1"},
-                    {"end_station_id", "station_4"},
-                }.dump()
-            };
-            
+
+            // JSON file with the quiet route inquiry
+            std::ifstream inputFile(START_END_JSON);
+            if (!inputFile.is_open()) {
+                spdlog::error("QuietRouteClient:Could not open start_end_stations.json");
+                throw std::runtime_error("Failed");
+            }
+
+            // Save the contents of the JSON file into the message string.
+            const std::string message((std::istreambuf_iterator<char>(inputFile)),
+                         std::istreambuf_iterator<char>());
+
             client.Send("/quiet-route",message,onSend);
         }
     };
@@ -77,6 +83,11 @@ int main()
             NetworkMonitor::TravelRoute quietRoute{};
             quietRoute = nlohmann::json::parse(message);
             spdlog::info("QuietRouteClient: Travel route received, closing connection.");
+
+            // JSON file with the quiet route itinerary 
+            std::ofstream outputFile(QUIET_ROUTE_JSON);
+            outputFile << quietRoute;
+            outputFile.close();
             //std::cout << "Travel Route : " << quietRoute;
             client.Close(onClose);
         }

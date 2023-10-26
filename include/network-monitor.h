@@ -41,7 +41,7 @@ struct NetworkMonitorConfig {
     std::string quietRouteHostname {"localhost"};
     std::string quietRouteIp {"127.0.0.1"};
     unsigned short quietRoutePort {8042};
-    double quietRouteMaxSlowdownPc {0.1};
+    double quietRouteMaxSlowdownPc {1.0};
     double quietRouteMinQuietnessPc {0.1};
     size_t quietRouteMaxNPaths {20};
 };
@@ -169,6 +169,7 @@ public:
             return NetworkMonitorError::kFailedTransportNetworkConstruction;
         }
 
+#ifndef DISABLE_NETWORK_EVENTS
         // STOMP client
         spdlog::info("NetworkMonitor: Constructing the STOMP client: {}:{}{}",
                      config.networkEventsUrl, config.networkEventsPort,
@@ -192,6 +193,7 @@ public:
                 OnNetworkEventsDisconnect(ec);
             }
         );
+#endif        
         // STOMP server
         spdlog::info("NetworkMonitor: Constructing the STOMP server: {}:{}",
                      config.quietRouteHostname, config.quietRoutePort);

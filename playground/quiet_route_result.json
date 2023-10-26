@@ -1,0 +1,42 @@
+{
+    "end_station_id": "station_038",
+    "start_station_id": "station_241",
+    "steps": [
+        {
+            "end_station_id": "station_092",
+            "line_id": "line_008",
+            "route_id": "route_056",
+            "start_station_id": "station_241",
+            "travel_time": 1
+        },
+        {
+            "end_station_id": "station_091",
+            "line_id": "line_006",
+            "route_id": "route_042",
+            "start_station_id": "station_092",
+            "travel_time": 3
+        },
+        {
+            "end_station_id": "station_090",
+            "line_id": "line_006",
+            "route_id": "route_042",
+            "start_station_id": "station_091",
+            "travel_time": 2
+        },
+        {
+            "end_station_id": "station_089",
+            "line_id": "line_006",
+            "route_id": "route_042",
+            "start_station_id": "station_090",
+            "travel_time": 1
+        },
+        {
+            "end_station_id": "station_038",
+            "line_id": "line_006",
+            "route_id": "route_042",
+            "start_station_id": "station_089",
+            "travel_time": 1
+        }
+    ],
+    "total_travel_time": 13
+}
