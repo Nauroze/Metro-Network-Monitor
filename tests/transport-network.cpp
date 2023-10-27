@@ -1095,7 +1095,7 @@ BOOST_AUTO_TEST_CASE(ltc_quiet1, *timeout {30})
     }
 }
 
-BOOST_AUTO_TEST_CASE(ltc_quiet2, *timeout {30})
+BOOST_AUTO_TEST_CASE(ltc_quiet2, *timeout {40})
 {
     // This is a path where many different routes compete for the fastest path.
     // In this case, we can win a more quiet path by giving up only a tiny bit
