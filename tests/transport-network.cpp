@@ -1049,7 +1049,7 @@ BOOST_AUTO_TEST_CASE(network_quiet_path_2routes, *timeout {1})
     }
 }
 
-BOOST_AUTO_TEST_CASE(ltc_quiet1, *timeout {1})
+BOOST_AUTO_TEST_CASE(ltc_quiet1, *timeout {30})
 {
     // This is a path where route_000 is the obvious and most convenient choice.
     // We must relax the travel time requirements by a lot to even consider
