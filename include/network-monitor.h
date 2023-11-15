@@ -28,7 +28,7 @@
 
 namespace NetworkMonitor {
 
-/*! \brief Configuration structure for the Live Transport Network Monitor
+/*! \brief Configuration structure for the Metro Network Monitor
  *         process.
  */
 struct NetworkMonitorConfig {
@@ -46,7 +46,7 @@ struct NetworkMonitorConfig {
     size_t quietRouteMaxNPaths {20};
 };
 
-/*! \brief Error codes for the Live Transport Network Monitor process.
+/*! \brief Error codes for the Metro Network Monitor process.
  */
 enum class NetworkMonitorError {
     kOk = 0,
@@ -80,7 +80,7 @@ std::string ToString(
     const NetworkMonitorError& m
 );
 
-/*! \brief Live Transport Network Monitor
+/*! \brief Metro Network Monitor
  *
  *  \tparam WsClient Type compatible with WebSocketClient.
  */
@@ -95,7 +95,7 @@ public:
      */
     ~NetworkMonitor() = default;
 
-    /*! \brief Setup the Live Transport Network Monitor.
+    /*! \brief Setup the Metro Network Monitor.
      *
      *  This function only sets up the connection and performs error checks.
      *  It does not run the STOMP client.

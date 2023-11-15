@@ -81,7 +81,7 @@ BOOST_FIXTURE_TEST_SUITE(class_StompClient, StompClientTestFixture);
 BOOST_AUTO_TEST_CASE(connect, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(connect, *timeout {1})
 BOOST_AUTO_TEST_CASE(connect_nullptr, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(connect_nullptr, *timeout {1})
 BOOST_AUTO_TEST_CASE(fail_to_connect_ws, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(fail_to_connect_ws, *timeout {1})
 BOOST_AUTO_TEST_CASE(fail_to_connect_auth, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(fail_to_connect_auth, *timeout {1})
 BOOST_AUTO_TEST_CASE(close, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(close, *timeout {1})
 BOOST_AUTO_TEST_CASE(close_nullptr, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(close_nullptr, *timeout {1})
 BOOST_AUTO_TEST_CASE(close_before_connect, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(close_before_connect, *timeout {1})
 BOOST_AUTO_TEST_CASE(subscribe, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -354,7 +354,7 @@ BOOST_AUTO_TEST_CASE(subscribe, *timeout {1})
 BOOST_AUTO_TEST_CASE(subscribe_onSubscribe_nullptr, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(subscribe_onSubscribe_nullptr, *timeout {1})
 BOOST_AUTO_TEST_CASE(subscribe_onMessage_nullptr, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -430,7 +430,7 @@ BOOST_AUTO_TEST_CASE(subscribe_onMessage_nullptr, *timeout {1})
 BOOST_AUTO_TEST_CASE(subscribe_get_message, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -469,7 +469,7 @@ BOOST_AUTO_TEST_CASE(subscribe_get_message, *timeout {1})
 BOOST_AUTO_TEST_CASE(subscribe_before_connect, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE(subscribe_before_connect, *timeout {1})
 BOOST_AUTO_TEST_CASE(subscribe_after_close, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -542,7 +542,7 @@ BOOST_AUTO_TEST_CASE(subscribe_after_close, *timeout {1})
 BOOST_AUTO_TEST_CASE(send, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -592,7 +592,7 @@ BOOST_AUTO_TEST_CASE(send, *timeout {1})
 BOOST_AUTO_TEST_CASE(send_fail, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -647,7 +647,7 @@ BOOST_AUTO_TEST_CASE(send_fail, *timeout {1})
 BOOST_AUTO_TEST_CASE(receive_message, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -705,7 +705,7 @@ BOOST_AUTO_TEST_CASE(receive_message, *timeout {1})
 BOOST_AUTO_TEST_CASE(subscribe_to_invalid_endpoint, *timeout {1})
 {
     // Since we use the mock, we do not actually connect to this remote.
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     const std::string username {"some_username"};
@@ -745,16 +745,16 @@ BOOST_AUTO_TEST_CASE(subscribe_to_invalid_endpoint, *timeout {1})
 BOOST_AUTO_TEST_CASE(live, *timeout {3})
 {
     const std::string url {GetEnvVar(
-        "LTNM_SERVER_URL",
-        "ltnm.learncppthroughprojects.com"
+        "MNM_SERVER_URL",
+        "metronetwork.tech"
     )};
     const std::string endpoint {"/network-events"};
-    const std::string port {GetEnvVar("LTNM_SERVER_PORT", "443")};
+    const std::string port {GetEnvVar("MNM_SERVER_PORT", "443")};
     boost::asio::io_context ioc {};
     boost::asio::ssl::context ctx {boost::asio::ssl::context::tlsv12_client};
     ctx.load_verify_file(TESTS_CACERT_PEM);
-    const std::string username {LTNM_USERNAME};
-    const std::string password {LTNM_PASSWORD};
+    const std::string username {MNM_USERNAME};
+    const std::string password {MNM_PASSWORD};
 
     StompClient<BoostWebSocketClient> client {
         url,

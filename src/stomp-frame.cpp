@@ -354,7 +354,7 @@ StompError StompFrame::ParseAndValidateFrame(const std::string_view frame)
 StompError StompFrame::ParseFrame(const std::string_view frame)
 {
     const std::string_view plain {frame};
-
+    
     // Frame delimiters
     static const char null {'\0'};
     static const char colon {':'};

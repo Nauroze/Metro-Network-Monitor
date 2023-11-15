@@ -33,7 +33,7 @@ public:
      *
      *  \param url      The URL of the server.
      *  \param endpoint The endpoint on the server to connect to.
-     *                  Example: ltnm.learncppthroughprojects.com/<endpoint>
+     *                  Example: metronetwork.tech/<endpoint>
      *  \param port     The port on the server.
      *  \param ioc      The io_context object. The user takes care of calling
      *                  ioc.run().

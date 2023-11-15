@@ -16,12 +16,12 @@ int main()
 {
     // Monitor configuration
     NetworkMonitorConfig config {
-        GetEnvVar("LTNM_SERVER_URL", "ltnm.learncppthroughprojects.com"),
-        GetEnvVar("LTNM_SERVER_PORT", "443"),
-        LTNM_USERNAME,
-        LTNM_PASSWORD,
+        GetEnvVar("MNM_SERVER_URL", "metronetwork.tech"),
+        GetEnvVar("MNM_SERVER_PORT", "443"),
+        MNM_USERNAME,
+        MNM_PASSWORD,
         TESTS_CACERT_PEM,
-        GetEnvVar("LTNM_NETWORK_LAYOUT_FILE_PATH", ""),
+        GetEnvVar("MNM_NETWORK_LAYOUT_FILE_PATH", ""),
         "127.0.0.1", // We use the IP as the server hostname because the client
                      // will connect to 127.0.0.1 directly, without host name
                      // resolution.
@@ -34,7 +34,7 @@ int main()
 
     // Optional run timeout
     // Default: Oms = run indefinitely
-    auto timeoutMs {std::stoi(GetEnvVar("LTNM_TIMEOUT_MS", "0"))};
+    auto timeoutMs {std::stoi(GetEnvVar("MNM_TIMEOUT_MS", "0"))};
 
     // Launch the monitor.
     NetworkMonitor::NetworkMonitor<

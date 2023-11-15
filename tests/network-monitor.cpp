@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_SUITE(Configure);
 BOOST_AUTO_TEST_CASE(ok)
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(ok_download_file, *timeout {3})
 {
     // Note: In this test we use a mock but we download the file for real.
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(ok_download_file, *timeout {3})
 BOOST_AUTO_TEST_CASE(missing_cacert_file)
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE(missing_cacert_file)
 BOOST_AUTO_TEST_CASE(missing_network_layout_file)
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(missing_network_layout_file)
 BOOST_AUTO_TEST_CASE(download_file_fail)
 {
     NetworkMonitorConfig config {
-        "ltnm-fail.learncppthroughprojects.com", // It will fail to download
+        "fail.metronetwork.tech", // It will fail to download
         "443",
         "some_username",
         "some_password_123",
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(download_file_fail)
 BOOST_AUTO_TEST_CASE(fail_to_parse_network_layout_file)
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(fail_to_parse_network_layout_file)
 BOOST_AUTO_TEST_CASE(fail_to_construct_transport_network)
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(fail_to_construct_transport_network)
 BOOST_AUTO_TEST_CASE(fail_to_launch_stomp_server)
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_SUITE(Run);
 BOOST_AUTO_TEST_CASE(fail_to_connect_ws, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(fail_to_connect_ws, *timeout {1})
 BOOST_AUTO_TEST_CASE(fail_to_connect_auth, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "wrong_password_123", // We will fail to authenticate
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(fail_to_connect_auth, *timeout {1})
 BOOST_AUTO_TEST_CASE(fail_to_subscribe, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(fail_to_subscribe, *timeout {1})
 BOOST_AUTO_TEST_CASE(fail_to_parse_passenger_event, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -387,7 +387,7 @@ BOOST_AUTO_TEST_CASE(fail_to_record_passenger_event, *timeout {1})
     // In this test we load a very simple network and then try to process a
     // passenger event for a station outside of the network.
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(fail_to_record_passenger_event, *timeout {1})
 BOOST_AUTO_TEST_CASE(record_1_passenger_event, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -466,7 +466,7 @@ BOOST_AUTO_TEST_CASE(record_1_passenger_event, *timeout {1})
 BOOST_AUTO_TEST_CASE(record_2_passenger_events_same_station, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -514,7 +514,7 @@ BOOST_AUTO_TEST_CASE(record_2_passenger_events_same_station, *timeout {1})
 BOOST_AUTO_TEST_CASE(record_2_passenger_events_different_station, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -606,7 +606,7 @@ BOOST_AUTO_TEST_CASE(record_passenger_events_from_file, *timeout {3})
 BOOST_AUTO_TEST_CASE(failed_incoming_connection, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -648,7 +648,7 @@ BOOST_AUTO_TEST_CASE(failed_incoming_connection, *timeout {1})
 BOOST_AUTO_TEST_CASE(incoming_connection, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -690,7 +690,7 @@ BOOST_AUTO_TEST_CASE(incoming_connection, *timeout {1})
 BOOST_AUTO_TEST_CASE(quiet_route_fail_bad_msg, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -741,7 +741,7 @@ BOOST_AUTO_TEST_CASE(quiet_route_fail_bad_msg, *timeout {1})
 BOOST_AUTO_TEST_CASE(quiet_route_bad_stations, *timeout {1})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -797,7 +797,7 @@ BOOST_AUTO_TEST_CASE(quiet_route_bad_stations, *timeout {1})
 BOOST_AUTO_TEST_CASE(quiet_route, *timeout {20})
 {
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -859,7 +859,7 @@ BOOST_AUTO_TEST_CASE(quiet_route_ltc_quiet2, *timeout {20})
     // routes of the ltc_quiet2 test for the TransportNetwork class.
 
     NetworkMonitorConfig config {
-        "ltnm.learncppthroughprojects.com",
+        "metronetwork.tech",
         "443",
         "some_username",
         "some_password_123",
@@ -946,12 +946,12 @@ BOOST_AUTO_TEST_CASE(live, *timeout {20})
     // request and check the format of the response we receive.
 
     NetworkMonitorConfig config {
-        GetEnvVar("LTNM_SERVER_URL", "ltnm.learncppthroughprojects.com"),
-        GetEnvVar("LTNM_SERVER_PORT", "443"),
-        LTNM_USERNAME,
-        LTNM_PASSWORD,
+        GetEnvVar("MNM_SERVER_URL", "metronetwork.tech"),
+        GetEnvVar("MNM_SERVER_PORT", "443"),
+        "valid_user",
+        "valid_password",
         TESTS_CACERT_PEM,
-        GetEnvVar("LTNM_NETWORK_LAYOUT_FILE_PATH", TESTS_NETWORK_LAYOUT_JSON),
+        GetEnvVar("MNM_NETWORK_LAYOUT_FILE_PATH", TESTS_NETWORK_LAYOUT_JSON),
         "127.0.0.1", // We use the IP as the server hostname because the client
                      // will connect to 127.0.0.1 directly, without host name
                      // resolution.

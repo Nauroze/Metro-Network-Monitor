@@ -586,7 +586,7 @@ bool CheckResponse(const std::string& response)
 BOOST_AUTO_TEST_CASE(network_events, *timeout {3})
 {
     // Server information and message
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/network-events"};
     const std::string port {"443"};
     
@@ -661,7 +661,7 @@ BOOST_AUTO_TEST_CASE(network_events, *timeout {3})
 BOOST_AUTO_TEST_CASE(echo, *timeout {20})
 {
     // Server information and message
-    const std::string url {"ltnm.learncppthroughprojects.com"};
+    const std::string url {"metronetwork.tech"};
     const std::string endpoint {"/echo"};
     const std::string port {"443"};
     const std::string message {"Hello WebSocket"};
