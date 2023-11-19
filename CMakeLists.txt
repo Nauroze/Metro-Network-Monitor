@@ -205,7 +205,8 @@ target_compile_definitions(playground-client
         MNM_USERNAME="valid_user"
         MNM_PASSWORD="valid_password"
         TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
-        TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data" 
+        TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data"
+        RESULTS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/playground/results.json" 
 )
 
 target_link_libraries(playground-client
@@ -223,7 +224,8 @@ target_compile_definitions(playground-network-monitor
         MNM_USERNAME="valid_user"
         MNM_PASSWORD="valid_password"
         TESTS_CACERT_PEM="${CMAKE_CURRENT_SOURCE_DIR}/tests/cacert.pem"
-        TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data" 
+        TEST_DATA="${CMAKE_CURRENT_SOURCE_DIR}/tests/test-data"
+        PASSENGER_COUNTS="${CMAKE_CURRENT_SOURCE_DIR}/playground/passenger_counts.json"  
 )
 
 target_link_libraries(playground-network-monitor

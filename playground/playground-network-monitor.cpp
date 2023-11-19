@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include <string>
+#include <fstream>
 
 using NetworkMonitor::BoostWebSocketClient;
 using NetworkMonitor::BoostWebSocketServer;
@@ -27,7 +28,7 @@ int main()
                      // resolution.
         "127.0.0.1",
         8042,
-        0.1,
+        1.0,
         0.1,
         20,
     };
@@ -44,6 +45,20 @@ int main()
     auto error {monitor.Configure(config)};
     if (error != NetworkMonitorError::kOk) {
         return -1;
+    }
+
+    // Record passenger counts.
+    nlohmann::json parsed;
+    std::ifstream counts_file(PASSENGER_COUNTS);
+    if(counts_file.is_open())
+    {
+    counts_file >> parsed;    
+    auto counts {parsed.get<std::unordered_map<NetworkMonitor::Id, int>>()};
+    monitor.SetNetworkCrowding(counts);
+    }
+    else
+    {
+        spdlog::error("Passenger counts file not found");
     }
 
     if (timeoutMs == 0) {
