@@ -11,9 +11,11 @@ std::string NetworkMonitor::GetEnvVar(
 )
 {
     const char* value {std::getenv(envVar.c_str())};
-    if (value == nullptr && defaultValue == std::nullopt) {
-        throw std::runtime_error("Could not find environment variable: " +
-                                 envVar);
+    if (value != nullptr) {
+        return value;
     }
-    return value != nullptr ? value : *defaultValue;
+    if (defaultValue.has_value()) {
+        return *defaultValue;
+    }
+    throw std::runtime_error("Could not find environment variable: " + envVar);
 }
