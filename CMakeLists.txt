@@ -235,3 +235,18 @@ target_link_libraries(playground-network-monitor
         OpenSSL::OpenSSL
         spdlog::spdlog
 )
+
+add_executable(transport-network-tool "${CMAKE_CURRENT_SOURCE_DIR}/playground/transport-network-tool.cpp")
+
+target_compile_definitions(transport-network-tool
+    PRIVATE
+        EXAMPLE_NETWORK_LAYOUT="${CMAKE_CURRENT_SOURCE_DIR}/playground/example_network_layout.json"
+        EXAMPLE_NETWORK_RESULTS="${CMAKE_CURRENT_SOURCE_DIR}/playground/example_network_results.json"  
+)
+
+target_link_libraries(transport-network-tool
+    PRIVATE
+        network-monitor
+        nlohmann_json::nlohmann_json
+        spdlog::spdlog
+)

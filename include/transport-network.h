@@ -268,6 +268,15 @@ public:
     long long int GetPassengerCount(
         const Id& station
     ) const;
+    
+    /*! \brief Set the network representation crowding..
+     *
+     *  This method can be used when testing to pre-seed the network with the
+     *  desired crowding.
+     */
+    void SetNetworkCrowding(
+        const std::unordered_map<Id, int>& passengerCounts
+    );
 
     /*! \brief Get list of routes serving a given station.
      *

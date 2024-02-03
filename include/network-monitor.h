@@ -311,13 +311,7 @@ public:
         const std::unordered_map<Id, int>& passengerCounts
     )
     {
-        for (const auto& [stationId, passengerCount]: passengerCounts) {
-            auto type {passengerCount > 0 ? PassengerEvent::Type::In :
-                                            PassengerEvent::Type::Out};
-            for (size_t _ {0}; _ < std::abs(passengerCount); ++_) {
-                network_.RecordPassengerEvent({stationId, type, {}});
-            }
-        }
+        network_.SetNetworkCrowding(passengerCounts);
     }
 
     /*! \brief Access the list of connected clients.

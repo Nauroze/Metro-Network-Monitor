@@ -294,6 +294,24 @@ long long int TransportNetwork::GetPassengerCount(
     return stationNode->passengerCount;
 }
 
+/*! \brief Set the network representation crowding..
+    *
+    *  This method can be used when testing to pre-seed the network with the
+    *  desired crowding.
+    */
+void TransportNetwork::SetNetworkCrowding(
+    const std::unordered_map<Id, int>& passengerCounts
+)
+{
+    for (const auto& [stationId, passengerCount]: passengerCounts) {
+        auto type {passengerCount > 0 ? PassengerEvent::Type::In :
+                                        PassengerEvent::Type::Out};
+        for (size_t _ {0}; _ < std::abs(passengerCount); ++_) {
+            RecordPassengerEvent({stationId, type, {}});
+        }
+    }
+}
+
 std::vector<Id> TransportNetwork::GetRoutesServingStation(
     const Id& station
 ) const
