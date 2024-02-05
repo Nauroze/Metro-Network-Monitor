@@ -17,17 +17,20 @@ int main()
         std::cerr << "JSON file invalid\n";
         return -1;
     }
-    nw.SetNetworkCrowding({{"station_0",1}});
-    auto travelRoute = nw.GetQuietTravelRoute(
-        "station_0",
-        "station_1",
-        1.0, // max slow down percent
-        0.1  // min quiet
-    );
     
+    // Add 10 people to Victoria Station
+    nw.SetNetworkCrowding({{"station_079", 10}});
+    
+    // St James Park (station 80) to Oxford Cirus (station 18)
+    auto travelRoute = nw.GetQuietTravelRoute(
+        "station_080",
+        "station_018",
+        0.2, // max slowdown percentage
+        0.2, // min quietness percentage
+        10);
+
     // Open a file in write mode
     std::ofstream file(EXAMPLE_NETWORK_RESULTS);
-    // Check if the file is open
     if (!file.is_open())
     {
         std::cerr << "Failed to open file for writing" << std::endl;
@@ -38,8 +41,6 @@ int main()
     nlohmann::json to_file;
     NetworkMonitor::to_json(to_file, travelRoute);
     file << to_file.dump(4);
-
-    // Close the file
     file.close();
 
     std::cout << "JSON data written to example_network_layout.json" << std::endl;
