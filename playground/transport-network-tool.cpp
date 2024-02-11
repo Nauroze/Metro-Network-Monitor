@@ -22,6 +22,7 @@ int main()
     nw.SetNetworkCrowding({{"station_079", 10}});
     
     // St James Park (station 80) to Oxford Cirus (station 18)
+    // auto travelRoute = nw.GetFastestTravelRoute("station_080", "station_018");
     auto travelRoute = nw.GetQuietTravelRoute(
         "station_080",
         "station_018",

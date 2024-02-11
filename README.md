@@ -1,7 +1,7 @@
 # Metro Network Monitor
 
 ## About the Project
-Metro Network Monitor is a software solution aimed at optimizing passenger flow across metro systems by suggesting less crowded routes to commuters. This project leverages modern C++ features, including RAII, asynchronous operations, lambdas, and template metaprogramming, along with libraries such as Boost.Asio and JSON for Modern C++. The network monitor operates a STOMP server that offers a quiet route service to any STOMP clients making itinerary requests.
+Metro Network Monitor is a software solution aimed at optimizing passenger flow across metro systems by suggesting less crowded routes to commuters. This project leverages modern C++ features, including automatic memory management, asynchronous operations, lambdas, templates and more, along with libraries such as Boost.Asio and JSON for Modern C++. The network monitor operates a STOMP server that offers a quiet route service to any STOMP clients making itinerary requests.
 
 ### Design Considerations
 
